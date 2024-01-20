@@ -12,6 +12,15 @@ class PersonController {
     }
   }
 
+  public async getAllPerson(req: Request, res: Response): Promise<void> {
+    try {
+      const person = await PersonModel.find();
+      res.status(200).json(person);
+    } catch (error) {
+      res.status(500).json({ error: "Error retrieving person" });
+    }
+  }
+
   public async getPerson(req: Request, res: Response): Promise<void> {
     try {
       const person = await PersonModel.findOne({ _id: req.params.id });

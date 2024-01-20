@@ -14,7 +14,7 @@ class PhoneController {
 
   public async getPhone(req: Request, res: Response): Promise<void> {
     try {
-      const phone = await PhoneModel.findOne({ _id: req.params.id });
+      const phone = await PhoneModel.findOne();
       res.status(200).json(phone);
     } catch (error) {
       res.status(500).json({ error: "Error retrieving phone" });

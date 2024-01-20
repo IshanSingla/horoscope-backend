@@ -7,14 +7,22 @@ import contactRoutes from "./routes/personRoutes";
 const app = express();
 const port = process.env.PORT || 3000;
 const mongoURI =
-  "mongodb+srv://horoscope:horoscope123@horoscope.5smkdto.mongodb.net/";
+  "mongodb+srv://bizzyka:w94htX4kekYfuWkH@internal.18brhl0.mongodb.net/";
 
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  dbName: "production",
 } as mongoose.ConnectOptions);
 
 app.use(bodyParser.json());
+app.get("/", (req, res) => {
+  res.send("Server is running");
+});
+
+app.get("/ping", (req, res) => {
+  res.send("pong");
+});
 
 
 
