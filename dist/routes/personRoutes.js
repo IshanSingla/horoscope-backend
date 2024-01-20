@@ -8,6 +8,7 @@ const personController_1 = __importDefault(require("../controllers/personControl
 const router = (0, express_1.Router)();
 router.post("/person", personController_1.default.createPerson);
 router.get("/person/:id", personController_1.default.getPerson);
+router.get("/person", personController_1.default.getAllPerson);
 router.put("/person/:id", personController_1.default.updatePerson);
 router.delete("/person/:id", personController_1.default.deletePerson);
 exports.default = router;
