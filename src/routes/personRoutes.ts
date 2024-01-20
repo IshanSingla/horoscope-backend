@@ -3,10 +3,10 @@ import PersonController from "../controllers/personController";
 
 const router: Router = Router();
 
-router.post("/person", PersonController.createPerson);
-router.get("/person/:id", PersonController.getPerson);
-router.get("/person", PersonController.getAllPerson);
-router.put("/person/:id", PersonController.updatePerson);
-router.delete("/person/:id", PersonController.deletePerson);
+router.post("/", PersonController.createPerson);
+router.get("/:id", PersonController.getPerson);
+router.get("/", PersonController.getAllPerson);
+router.put("/:id", PersonController.updatePerson);
+router.delete("/:id", PersonController.deletePerson);
 
 export default router;

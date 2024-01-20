@@ -25,11 +25,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const PersonSchema = new mongoose_1.Schema({
-    name: { type: String, required: true },
+    name: { type: String },
     mobile_number: { type: String, required: true },
     whatsapp_number: { type: String, required: true },
-    dob: { type: String, required: true },
-    place_of_birth: { type: String, required: true },
-    series_number: { type: String, required: true },
+    dob: { type: String },
+    place_of_birth: {
+        district: { type: String },
+        city: { type: String },
+        state: { type: String },
+        country: { type: String },
+    },
+    series_number: { type: Number, required: true, enum: [1, 2, 3, 4, 5] },
 });
 exports.default = mongoose_1.default.model("Person", PersonSchema);

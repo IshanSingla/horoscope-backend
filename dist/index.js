@@ -23,8 +23,11 @@ app.get("/", (req, res) => {
 app.get("/ping", (req, res) => {
     res.send("pong");
 });
-app.use("/api", phoneRoutes_1.default);
-app.use("/api", personRoutes_1.default);
+app.get("/region", (req, res) => {
+    res.send(`I am an Edge Function! (executed on ${process.env.VERCEL_REGION})`);
+});
+app.use("/api/phone", phoneRoutes_1.default);
+app.use("/api/person", personRoutes_1.default);
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
