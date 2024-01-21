@@ -8,15 +8,15 @@ const firebaseAdmin_1 = __importDefault(require("../services/firebaseAdmin"));
 class PhoneController {
     async createPhone(req, res) {
         try {
-            const phone = new phoneModel_1.default(req.body);
-            const savedPhone = await phone.save();
+            // const phone = new PhoneModel(req.body);
+            // const savedPhone = await phone.save();
             const message = {
                 notification: {
-                    title: 'Call is Coming from ' + savedPhone.phone_no,
+                    title: 'Call is Coming from ' + req.body.phone_no,
                     body: 'Please pick up the call',
                 },
                 data: {
-                    number: savedPhone.phone_no,
+                    number: req.body.phone_no,
                 },
                 android: {
                     priority: 'high',
@@ -31,7 +31,7 @@ class PhoneController {
                 .catch((error) => {
                 console.log('Error sending message:', error);
             });
-            res.status(201).json(savedPhone);
+            res.status(201).json("savedPhone");
         }
         catch (error) {
             res.status(500).json({ error: "Error creating phone" });

@@ -8,6 +8,7 @@ class PersonController {
       const savedPerson = await person.save();
       res.status(201).json(savedPerson);
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: "Error creating person" });
     }
   }
@@ -17,6 +18,7 @@ class PersonController {
       const person = await PersonModel.find();
       res.status(200).json(person);
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: "Error retrieving person" });
     }
   }
