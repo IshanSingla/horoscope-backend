@@ -13,7 +13,7 @@ const PersonSchema: Schema = new Schema({
   name: { type: String },
   mobile_number: { type: String, required: true },
   whatsapp_number: { type: String, required: true },
-  dob: { type: String },
+  dob: { type: Date, },
   place_of_birth: {
     district: { type: String },
     city: { type: String },
@@ -21,6 +21,8 @@ const PersonSchema: Schema = new Schema({
     country: { type: String },
   },
   series_number: { type: Number, required: true, enum: [1, 2, 3, 4, 5] },
+}, {
+  timestamps: true,
 });
 
 export default mongoose.model<Person>("Person", PersonSchema);
