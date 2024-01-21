@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "astrohut-internal",
+  "private_key_id": "2a31798edf8ea65af78f09f4cc169c6acd50edb1",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDVIPpuuVNFfI49\nrDw5Vs5lgTPgb0cDKRPLQ1yMhf6fbE0fVUztE15Y68UAR33u5BdH+Gcql2Mo+s9o\nOEuuDHfs72KkW4Z8ffLShPqHGfyu40EEr6DkbY6wlh0pCKbuWHWU/fB1oiuIXhAt\nlTVeSVRnFDowniFtmLccbQAkGtYv6VkyFZhyoNJCvmzY3B1b62j8FsSOjKjhb29x\nGN8OcHs6SLLaQ+ryFnorYFsPverTUSqZb4JpgyOVjBoWmbvQxehBB6YSVnRM2/j5\nInY76eMhAzbuYazyqloF03apCI9zVx8k7NBQmtI81kDQIEPFno1pW+o/ucdpfTgn\n6FZ0XkErAgMBAAECggEAO6WyoOlZ/kD5OBZrdmqucecCg0XxXFeTNBhinutjUu/G\n98VyNYltpro5VLYtbv3D7D7/dIKQ3GexQ0w6FfhkWdm3RCNfVJkVK8jOqp/hwXpV\neH/EqhllTVN9zr2epmb4ZV3afbmIsG4O3gr7uCsSpZSaIoAm/9q1KI3y86fVGOwV\nWgZ3hucPQshfMZ2UWvIN+TtQYI/oZhO+E/F8LCo4Bn12Y0E4gp/F2Yt5YRlfdHfn\ngVtv1smCXXuKMPlxE6GntSOBj2pbp5hQInvQ8uCuxy6hX/AlKgEMUbjEWnK188No\nqTBF8N/ddwiSPubu+aVfM8m/F7Sy7acks2iOObpSRQKBgQDxntaIEgUZX1YdgDOv\n5nqpXrck+IXnILBGzlGXzPKICoT2vX32VANbjKRmnzy8WRK8mXXsgUqKpQ1N2Myt\n+HAu+wqkMKnFUV9pswe7I/PB86OZBTFNDjCwhHPHSiXURAWt2St1Y48lyyRSoXZX\nRC6kWw8nVER0O3zevISE/zPEnwKBgQDh0A+0qj1MSa+Bzz5J7gbclhrMPpmhnb1S\nOCnvS0jeAqBgGiB3OB5nkGcC1Bu0EPGvaF7Jv7KlXJU3zdb2kCTTfsrCA3PgN8Ma\nrvI9xjJxxO5xO3Qmf1uWG5aM9KQSHKxHS/OdMZfbcK7ATftRePQDMiSp1PuX6kIO\nTpI9G3fL9QKBgQDjGDRw7ebnAwkwbxelg03UtNYUJJXON5YW5sIfmBx4KtLwCghD\nJpGFUXoPjikKqfmHVAFXCeoix6DqgxNVjET8ky1cRvS6JZI1CXUBunfX2oPwRcYh\ns22l6sfbDuDhUhG4ZX6INcwMbJM2KtXMjaP9DC0A/R3d1S+3NZ6kViy05wKBgQCL\nUKMv8kvpMhjOvH6QfALNuuoDkqeUF06DWFU+5jKpjfNF9ziKdRwFBwkWrKf+2ulR\nL9IzJEriTJFfIWZ7LgkaVsJfGmQ2NBDx+HdJd2sN19LIF0ccrTxjCthCVHiZGAmN\n3yUImV04LHgT+siPxlC9XAVUpism2YcxbnY4ryaktQKBgQCZWRiLjxLWUVvxJ2Vy\nQgBFpCz9ppq3pGMPE/Wuii7+sM2InpwdgdIJkCCutirRCuWR12DeRsRIgEbkjvT2\nFx2s0qbYW1+maY8Sb6QVSVPqEPSf8hwm5AXt1Rd0iuJ08ossRkTMjBC+8KBIGx8Q\noq+lnZhzCv2d5ypcyloLPce2Ug==\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-qmax6@astrohut-internal.iam.gserviceaccount.com",
+  "client_id": "109384135119675568793",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-qmax6%40astrohut-internal.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -23,20 +23,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importStar(require("mongoose"));
-const PersonSchema = new mongoose_1.Schema({
-    name: { type: String },
-    mobile_number: { type: String, required: true },
-    whatsapp_number: { type: String, required: true },
-    dob: { type: Date, },
-    place_of_birth: {
-        district: { type: String },
-        city: { type: String },
-        state: { type: String },
-        country: { type: String },
-    },
-    series_number: { type: Number, required: true, enum: [1, 2, 3, 4, 5] },
-}, {
-    timestamps: true,
+const admin = __importStar(require("firebase-admin"));
+// Ensure environment variables are loaded (use dotenv or similar if needed)
+// require('dotenv').config(); // Uncomment this line if you are using dotenv
+const serviceAccount = require('../../firebase-admin.json');
+// Initialize Firebase Admin SDK
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
 });
-exports.default = mongoose_1.default.model("Person", PersonSchema);
+exports.default = admin;

@@ -1,13 +1,23 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface Person extends Document {
-  name: string;
+interface PlaceOfBirth {
+  district?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+}
+
+export interface Person extends Document  {
+  name?: string;
   mobile_number: string;
   whatsapp_number: string;
-  dob: string;
-  place_of_birth: string;
-  series_number: string;
+  dob?: Date;
+  place_of_birth?: PlaceOfBirth;
+  series_number: 1 | 2 | 3 | 4 | 5;
+  createdAt?: Date; // Added for timestamps
+  updatedAt?: Date; // Added for timestamps
 }
+
 
 const PersonSchema: Schema = new Schema({
   name: { type: String },
