@@ -33,23 +33,10 @@ class CallController {
           console.log("Error sending message:", error);
         });
 
-      const existCall = await CallModel.findOne({
-        mobile_number: req.body.mobile_number,
-      });
-      if (existCall) {
-        const contact = await contactModel.findOne({
-          mobile_number: req.body.mobile_number,
-        });
-        res.status(200).json({
-          message: "Call already saved",
-          call: existCall,
-          contact: contact,
-        });
-        return;
-      }
-      const call = new CallModel(req.body);
-      const savedCall = await call.save();
-      res.status(201).json({ message: "call saved", call: savedCall });
+
+        const call = new CallModel(req.body);
+        const savedCall = await call.save();
+        res.status(201).json({ message: "call saved", call: savedCall });
     } catch (error: any) {
       console.log(error);
       res.status(500).json({ error: error.message });
@@ -58,10 +45,12 @@ class CallController {
 
   public async getLastCall(req: Request, res: Response): Promise<void> {
     try {
-      const lastCall = await callModel.find();
-      res.status(200).json({
-        call: lastCall.reverse()[0],
-      });
+      let lastCall = await callModel.findOne({}).sort({ calledAt: - 1 });
+      const contact =await  contactModel.findOne({
+        mobile_number: lastCall?.mobile_number
+      })
+      console.log(contact)
+      res.status(200).send(contact ?? lastCall);
     } catch (error) {
       res.status(500).json({ error: "Error retrieving call" });
     }
@@ -78,11 +67,11 @@ class CallController {
 
   public async updateCall(req: Request, res: Response): Promise<void> {
     try {
-      const existCall = await CallModel.findById(req.params.id)
-      if(!existCall){
+      const existCall = await CallModel.findById(req.params.id);
+      if (!existCall) {
         res.status(404).json({
-          message: "Call not found!"
-        })
+          message: "Call not found!",
+        });
       }
       const updatedCall = await CallModel.findByIdAndUpdate(
         req.params.id,

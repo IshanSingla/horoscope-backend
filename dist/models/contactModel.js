@@ -27,7 +27,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const ContactSchema = new mongoose_1.Schema({
     name: {
         type: String,
-        require: true,
+        require: false,
     },
     mobile_number: {
         type: Number,
@@ -37,7 +37,7 @@ const ContactSchema = new mongoose_1.Schema({
             validator: function (v) {
                 return /\d{10}/.test(v);
             },
-            message: (props) => `${props.value} is not a valid mobile number!`
+            message: (props) => `${props.value} is not a valid mobile number!`,
         },
     },
     whatsapp_number: {
@@ -47,35 +47,23 @@ const ContactSchema = new mongoose_1.Schema({
             validator: function (v) {
                 return /\d{10}/.test(v);
             },
-            message: (props) => `${props.value} is not a valid mobile number!`
+            message: (props) => `${props.value} is not a valid mobile number!`,
         },
     },
     gender: {
         type: String,
-        enum: ["male", "female", "not specified"],
-        required: true,
+        required: false,
     },
     dob: { type: Date },
     place_of_birth: {
-        district: { type: String },
-        city: { type: String },
-        state: { type: String },
-        country: { type: String },
+        description: { type: String },
         latitude: { type: Number },
         longitude: { type: Number },
-    },
-    updatedAt: {
-        type: Date,
-        default: new Date(),
-    },
-    createdAt: {
-        type: Date,
-        default: new Date(),
     },
     series_number: {
         type: Number,
         required: true,
-        enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        default: 0,
     },
 }, {
     timestamps: true,

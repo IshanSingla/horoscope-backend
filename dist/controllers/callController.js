@@ -33,20 +33,6 @@ class CallController {
                 .catch((error) => {
                 console.log("Error sending message:", error);
             });
-            const existCall = await callModel_1.default.findOne({
-                mobile_number: req.body.mobile_number,
-            });
-            if (existCall) {
-                const contact = await contactModel_1.default.findOne({
-                    mobile_number: req.body.mobile_number,
-                });
-                res.status(200).json({
-                    message: "Call already saved",
-                    call: existCall,
-                    contact: contact,
-                });
-                return;
-            }
             const call = new callModel_1.default(req.body);
             const savedCall = await call.save();
             res.status(201).json({ message: "call saved", call: savedCall });
@@ -58,10 +44,12 @@ class CallController {
     }
     async getLastCall(req, res) {
         try {
-            const lastCall = await callModel_2.default.find();
-            res.status(200).json({
-                call: lastCall.reverse()[0],
+            let lastCall = await callModel_2.default.findOne({}).sort({ calledAt: -1 });
+            const contact = await contactModel_1.default.findOne({
+                mobile_number: lastCall?.mobile_number
             });
+            console.log(contact);
+            res.status(200).send(contact ?? lastCall);
         }
         catch (error) {
             res.status(500).json({ error: "Error retrieving call" });
@@ -81,7 +69,7 @@ class CallController {
             const existCall = await callModel_1.default.findById(req.params.id);
             if (!existCall) {
                 res.status(404).json({
-                    message: "Call not found!"
+                    message: "Call not found!",
                 });
             }
             const updatedCall = await callModel_1.default.findByIdAndUpdate(req.params.id, req.body, {

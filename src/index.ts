@@ -15,7 +15,7 @@ app.use(cors({
 
 const port = process.env.PORT || 3000;
 const mongoURI =
-  "mongodb+srv://admin:admin@cluster0.8fjfi6m.mongodb.net/?retryWrites=true&w=majority";
+  "mongodb+srv://bizzyka:w94htX4kekYfuWkH@internal.18brhl0.mongodb.net/";
 
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
