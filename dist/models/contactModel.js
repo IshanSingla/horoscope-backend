@@ -30,7 +30,7 @@ const ContactSchema = new mongoose_1.Schema({
         require: false,
     },
     mobile_number: {
-        type: Number,
+        type: String,
         required: true,
         unique: true,
         validate: {
@@ -41,7 +41,7 @@ const ContactSchema = new mongoose_1.Schema({
         },
     },
     whatsapp_number: {
-        type: Number,
+        type: String,
         required: true,
         validate: {
             validator: function (v) {

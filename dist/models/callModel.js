@@ -26,8 +26,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const CallSchema = new mongoose_1.Schema({
     mobile_number: {
-        type: Number,
-        unique: true,
+        type: String,
+        unique: false,
         required: true,
         validate: {
             validator: function (v) {
