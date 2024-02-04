@@ -1,8 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
-import phoneRoutes from "./routes/phoneRoutes";
-import contactRoutes from "./routes/personRoutes";
+import callRoutes from "./routes/callRoutes";
+import contactRoutes from "./routes/contactRoutes";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -29,8 +29,8 @@ app.get("/region", (req, res) => {
 }
 );
 
-app.use("/api/phone", phoneRoutes);
-app.use("/api/person", contactRoutes);
+app.use("/api/phone", callRoutes);
+app.use("/api/contact", contactRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
