@@ -26,7 +26,7 @@ const ContactSchema: Schema = new Schema(
     },
 
     mobile_number: {
-      type: Number,
+      type: String,
       required: true,
       unique: true,
       validate: {
@@ -37,7 +37,7 @@ const ContactSchema: Schema = new Schema(
       },
     },
     whatsapp_number: {
-      type: Number,
+      type: String,
       required: true,
       validate: {
         validator: function (v: any) {

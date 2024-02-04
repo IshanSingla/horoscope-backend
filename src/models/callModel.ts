@@ -1,14 +1,14 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface Call extends Document {
-  mobile_number: number;
+  mobile_number: string;
   calledAt: Date
 }
 
 const CallSchema: Schema = new Schema({
   mobile_number: {
-    type: Number,
-    unique:true,
+    type: String,
+    unique:false,
     required: true,
     validate: {
       validator: function (v: any) {

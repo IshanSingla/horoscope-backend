@@ -15,7 +15,7 @@ class CallController {
           body: "Please pick up the call",
         },
         data: {
-          number: req.body.mobile_number.toString(),
+          number: req.body.mobile_number,
         },
         android: {
           priority: "high",
