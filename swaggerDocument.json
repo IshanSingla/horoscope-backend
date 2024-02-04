@@ -1,0 +1,507 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "API Documentation",
+      "description": "API documentation for managing calls and contacts",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/": {
+        "post": {
+          "summary": "Create a new call",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallRequestBody"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Call created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CallResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "get": {
+          "summary": "Get all calls",
+          "responses": {
+            "200": {
+              "description": "List of calls",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CallsResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/getlastcall": {
+        "get": {
+          "summary": "Get the last call",
+          "responses": {
+            "200": {
+              "description": "The last call",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CallResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/{id}": {
+        "put": {
+          "summary": "Update a call by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of the call to update",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallRequestBody"
+                }
+              }
+            }
+          },
+          "responses": {
+            "203": {
+              "description": "Call updated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CallResponse"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Call not found!",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "summary": "Delete a call by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of the call to delete",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Call deleted successfully"
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/contacts": {
+        "post": {
+          "summary": "Create a new contact",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRequestBody"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Contact created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ContactResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "get": {
+          "summary": "Get all contacts",
+          "responses": {
+            "200": {
+              "description": "List of contacts",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ContactsResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/contacts/{id}": {
+        "get": {
+          "summary": "Get a contact by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of the contact to retrieve",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Contact retrieved successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ContactResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "summary": "Update a contact by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of the contact to update",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactRequestBody"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Contact updated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ContactResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "summary": "Delete a contact by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of the contact to delete",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Contact deleted successfully"
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "summary": "Check if a mobile number is valid",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobileNumberValidationRequestBody"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Mobile number is valid",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ValidationResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Mobile number is invalid",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "CallRequestBody": {
+          "type": "object",
+          "properties": {
+            "mobile_number": {
+              "type": "string",
+              "description": "The mobile number for the call"
+            }
+          },
+          "required": ["mobile_number"]
+        },
+        "CallResponse": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "A message related to the call"
+            },
+            "call": {
+              "$ref": "#/components/schemas/Call"
+            }
+          },
+          "required": ["message", "call"]
+        },
+        "Call": {
+          "type": "object",
+          "properties": {
+            "placeholder_property": {
+              "type": "string"
+            }
+          }
+        },
+        "CallsResponse": {
+          "type": "object",
+          "properties": {
+            "call": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Call"
+              }
+            }
+          }
+        },
+        "Error": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          }
+        },
+        "ContactRequestBody": {
+          "type": "object",
+          "properties": {
+            "mobile_number": {
+              "type": "string",
+              "description": "The mobile number for the contact"
+            }
+          },
+          "required": ["mobile_number"]
+        },
+        "ContactResponse": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "A message related to the contact"
+            },
+            "contact": {
+              "$ref": "#/components/schemas/Contact"
+            }
+          },
+          "required": ["message", "contact"]
+        },
+        "ContactsResponse": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Contact"
+          }
+        },
+        "MobileNumberValidationRequestBody": {
+          "type": "object",
+          "properties": {
+            "mobile_number": {
+              "type": "string",
+              "description": "The mobile number to validate"
+            }
+          },
+          "required": ["mobile_number"]
+        },
+        "ValidationResponse": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Validation result message"
+            }
+          }
+        },
+        "Contact": {
+          "type": "object",
+          "properties": {
+            "placeholder_property": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
