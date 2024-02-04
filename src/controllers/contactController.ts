@@ -49,14 +49,14 @@ class ContactController {
     try {
       const updatedContact = await ContactModel.findByIdAndUpdate(
         req.params.id,
-        { updatedAt: new Date() ,...req.body},
+        { updatedAt: new Date(), ...req.body },
         {
           new: true,
         }
       );
       res.status(200).json({ message: "Contact updated", updatedContact });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       res.status(500).json({ error: "Error updating contact" });
     }
   }
@@ -65,10 +65,34 @@ class ContactController {
     try {
       await ContactModel.findByIdAndDelete(req.params.id);
       res.status(204).json({
-        message: 'Contact Deleted'
+        message: "Contact Deleted",
       });
     } catch (error) {
       res.status(500).json({ error: "Error deleting contact" });
+    }
+  }
+
+  public async isMobileNumber(req: Request, res: Response): Promise<void> {
+    try {
+      let mobile_number = req.body.mobile_number;
+      if (typeof req.body.mobile_number === "string") {
+        mobile_number = parseInt(req.body.mobile_number);
+      }
+      if (/\d{10}/.test(mobile_number)) {
+        res.status(200).json({
+          message: "Number is valid",
+        });
+        return;
+      }
+      res.status(500).json({
+        message: "Number is invalid",
+      });
+      return;
+    } catch (error: any) {
+      console.log(error.message);
+      res.status(500).json({
+        error: error.message,
+      });
     }
   }
 }

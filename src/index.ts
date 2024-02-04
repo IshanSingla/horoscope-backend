@@ -3,11 +3,19 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import callRoutes from "./routes/callRoutes";
 import contactRoutes from "./routes/contactRoutes";
+import cors from 'cors'
+import swaggerUi from 'swagger-ui-express'
+import swaggerDocument from '../swaggerDocument.json'
+
 
 const app = express();
+app.use(cors({
+  origin:false
+}))
+
 const port = process.env.PORT || 3000;
 const mongoURI =
-  "mongodb+srv://bizzyka:w94htX4kekYfuWkH@internal.18brhl0.mongodb.net/";
+  "mongodb+srv://admin:admin@cluster0.8fjfi6m.mongodb.net/?retryWrites=true&w=majority";
 
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
@@ -29,8 +37,10 @@ app.get("/region", (req, res) => {
 }
 );
 
-app.use("/api/phone", callRoutes);
+app.use("/api/call", callRoutes);
 app.use("/api/contact", contactRoutes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
