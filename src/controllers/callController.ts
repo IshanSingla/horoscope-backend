@@ -9,6 +9,10 @@ import contactModel from "../models/contactModel";
 class CallController {
   public async createCall(req: Request, res: Response): Promise<void> {
     try {
+      if (!req.body.mobile_number) {
+        res.status(400).json({ error: "Mobile number is required" });
+        return;
+      }
       const message: Message = {
         notification: {
           title: "Call is Coming from" + req.body.mobile_number,
@@ -34,9 +38,12 @@ class CallController {
         });
 
 
-        const call = new CallModel(req.body);
-        const savedCall = await call.save();
-        res.status(201).json({ message: "call saved", call: savedCall });
+      const call = new CallModel({
+        mobile_number: req.body.mobile_number,
+        calledAt: new Date(),
+      });
+      const savedCall = await call.save();
+      res.status(201).json({ message: "call saved", call: savedCall });
     } catch (error: any) {
       console.log(error);
       res.status(500).json({ error: error.message });
@@ -46,7 +53,7 @@ class CallController {
   public async getLastCall(req: Request, res: Response): Promise<void> {
     try {
       let lastCall = await callModel.findOne({}).sort({ calledAt: - 1 });
-      const contact =await  contactModel.findOne({
+      const contact = await contactModel.findOne({
         mobile_number: lastCall?.mobile_number
       })
       console.log(contact)

@@ -10,6 +10,10 @@ const contactModel_1 = __importDefault(require("../models/contactModel"));
 class CallController {
     async createCall(req, res) {
         try {
+            if (!req.body.mobile_number) {
+                res.status(400).json({ error: "Mobile number is required" });
+                return;
+            }
             const message = {
                 notification: {
                     title: "Call is Coming from" + req.body.mobile_number,
@@ -33,7 +37,10 @@ class CallController {
                 .catch((error) => {
                 console.log("Error sending message:", error);
             });
-            const call = new callModel_1.default(req.body);
+            const call = new callModel_1.default({
+                mobile_number: req.body.mobile_number,
+                calledAt: new Date(),
+            });
             const savedCall = await call.save();
             res.status(201).json({ message: "call saved", call: savedCall });
         }
