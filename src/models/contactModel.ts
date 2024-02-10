@@ -11,6 +11,7 @@ export interface Contact extends Document {
   name?: string;
   mobile_number: string;
   whatsapp_number: string;
+  gender?:string;
   dob?: Date;
   place_of_birth?: PlaceOfBirth;
   series_number?: number;
