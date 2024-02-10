@@ -75,11 +75,11 @@ app.get("/ping", (req, res) => {
 app.get("/region", (req, res) => {
   res.send(`I am an Edge Function! (executed on ${process.env.VERCEL_REGION})`);
 });
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 app.use("/api/call", callRoutes);
 app.use("/api/contact", contactRoutes);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

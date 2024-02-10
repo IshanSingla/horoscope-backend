@@ -15,6 +15,7 @@ export interface Contact extends Document {
   dob?: Date;
   place_of_birth?: PlaceOfBirth;
   series_number?: number;
+  last_fetched?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -63,6 +64,10 @@ const ContactSchema: Schema = new Schema(
       required: true,
       default: 0,
     },
+    last_fetched:{
+      type: Date,
+      default: null
+    }
   },
   {
     timestamps: true,

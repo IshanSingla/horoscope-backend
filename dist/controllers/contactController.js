@@ -130,6 +130,26 @@ class ContactController {
             res.status(500).json({ error: "Error deleting contact" });
         }
     }
+    async getNewContacts(request, response) {
+        try {
+            const nonFetchedContacts = await contactModel_1.default.find({
+                last_fetched: { $eq: null },
+            });
+            await Promise.all(nonFetchedContacts.map(async (contact) => {
+                contact.last_fetched = new Date();
+                await contact.save();
+            }));
+            response.status(200).json({
+                message: "Contact retrieved successfully",
+                contact: nonFetchedContacts,
+            });
+        }
+        catch (error) {
+            response.status(500).json({
+                error: error.message || "Internal server error",
+            });
+        }
+    }
     async isMobileNumber(req, res) {
         try {
             let mobile_number = req.body.mobile_number;

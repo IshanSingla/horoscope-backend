@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import ContactModel, { Contact } from "../models/contactModel";
 import authModal from "../models/authModal";
 import axios from "axios";
-import { Error } from "mongoose";
 
 class ContactController {
   public async createContact(req: Request, res: Response): Promise<void> {
@@ -138,6 +137,26 @@ class ContactController {
     }
   }
 
+  public async getNewContacts(request: Request, response: Response) {
+    try {
+      const nonFetchedContacts: Contact[] = await ContactModel.find({
+        last_fetched: { $eq: null },
+      });
+      await Promise.all(nonFetchedContacts.map(async (contact) => {
+        contact.last_fetched = new Date();
+        await contact.save();
+      }));
+
+      response.status(200).json({
+        message: "Contact retrieved successfully",
+        contact: nonFetchedContacts,
+      });
+    } catch (error: any) {
+      response.status(500).json({
+        error: error.message || "Internal server error",
+      });
+    }
+  }
   public async isMobileNumber(req: Request, res: Response): Promise<void> {
     try {
       let mobile_number = req.body.mobile_number;

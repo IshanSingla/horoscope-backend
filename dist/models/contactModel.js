@@ -65,6 +65,10 @@ const ContactSchema = new mongoose_1.Schema({
         required: true,
         default: 0,
     },
+    last_fetched: {
+        type: Date,
+        default: null
+    }
 }, {
     timestamps: true,
 });
