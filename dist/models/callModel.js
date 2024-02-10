@@ -27,7 +27,6 @@ const mongoose_1 = __importStar(require("mongoose"));
 const CallSchema = new mongoose_1.Schema({
     mobile_number: {
         type: String,
-        unique: false,
         required: true,
         validate: {
             validator: function (v) {
@@ -38,6 +37,7 @@ const CallSchema = new mongoose_1.Schema({
     },
     calledAt: {
         type: Date,
+        required: true,
         default: new Date(),
     },
 });

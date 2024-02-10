@@ -8,7 +8,6 @@ export interface Call extends Document {
 const CallSchema: Schema = new Schema({
   mobile_number: {
     type: String,
-    unique:false,
     required: true,
     validate: {
       validator: function (v: any) {
@@ -19,6 +18,7 @@ const CallSchema: Schema = new Schema({
   },
   calledAt: {
     type: Date,
+    required: true,
     default: new Date(),
   },
 });
