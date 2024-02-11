@@ -87,13 +87,13 @@ class ContactController {
       console.log(error.message);
       res
         .status(500)
-        .json({ error: error.message || "Error creating contact" });
+        .json({ error: error.message, message:  "Error creating contact" });
     }
   }
 
   public async getAllContact(req: Request, res: Response): Promise<void> {
     try {
-      const contact = await ContactModel.find();
+      const contact = await ContactModel.find().sort(createdAt: -1) ;
       res.status(200).json(contact);
     } catch (error) {
       console.log(error);
