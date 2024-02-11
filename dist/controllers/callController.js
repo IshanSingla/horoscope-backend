@@ -50,92 +50,112 @@ class CallController {
         }
     }
     async createIVRPre(req, res) {
-        const newData = new ivrdata_1.default({
-            from: req.query.from,
-            time: req.query.time,
-            agent_name: req.query.agent_name,
-            agent_number: req.query.agent_number,
-            to: req.query.to,
-            uniqueid: req.query.uniqueid,
-            unix: req.query.unix,
-            status: req.query.status,
-            total_duration: req.query.total_duration,
-            agent_duration: req.query.agent_duration,
-            operator: req.query.operator,
-            circle: req.query.circle,
-            extension: req.query.extension,
-            recording: req.query.recording
-        });
-        await newData.save();
-        const message = {
-            notification: {
-                title: "Call is Coming from" + req.body.from,
-                body: "Please pick up the call",
-            },
-            data: {
-                number: req.body.from,
-            },
-            android: {
-                priority: "high",
-            },
-            topic: "calls",
-            // token: 'fcm_token',
-        };
-        firebaseAdmin_1.default
-            .messaging()
-            .send(message)
-            .then((response) => {
-            console.log("Successfully sent message:", response);
-        })
-            .catch((error) => {
-            console.log("Error sending message:", error);
-        });
-        res.status(200).send("Data saved");
+        try {
+            const newData = new ivrdata_1.default({
+                from: req.query.from,
+                time: req.query.time,
+                agent_name: req.query.agent_name,
+                agent_number: req.query.agent_number,
+                to: req.query.to,
+                uniqueid: req.query.uniqueid,
+                unix: req.query.unix,
+                status: req.query.status,
+                total_duration: req.query.total_duration,
+                agent_duration: req.query.agent_duration,
+                operator: req.query.operator,
+                circle: req.query.circle,
+                extension: req.query.extension,
+                recording: req.query.recording
+            });
+            await newData.save();
+            const message = {
+                notification: {
+                    title: "Call is Coming from" + req.body.from,
+                    body: "Please pick up the call",
+                },
+                data: {
+                    number: req.body.from,
+                },
+                android: {
+                    priority: "high",
+                },
+                topic: "calls",
+                // token: 'fcm_token',
+            };
+            try {
+                firebaseAdmin_1.default
+                    .messaging()
+                    .send(message)
+                    .then((response) => {
+                    console.log("Successfully sent message:", response);
+                })
+                    .catch((error) => {
+                    console.log("Error sending message:", error);
+                });
+            }
+            catch (error) {
+                console.log(error);
+            }
+            res.status(200).send("Data saved");
+        }
+        catch (error) {
+            res.status(500).json({ error: "Error creating call", message: error.message });
+        }
     }
     async createIVRPost(req, res) {
-        await ivrdata_1.default.findOneAndUpdate({ uniqueid: req.query.uniqueid }, {
-            from: req.query.from,
-            time: req.query.time,
-            agent_name: req.query.agent_name,
-            agent_number: req.query.agent_number,
-            to: req.query.to,
-            uniqueid: req.query.uniqueid,
-            unix: req.query.unix,
-            status: req.query.status,
-            total_duration: req.query.total_duration,
-            agent_duration: req.query.agent_duration,
-            operator: req.query.operator,
-            circle: req.query.circle,
-            extension: req.query.extension,
-            recording: req.query.recording
-        }, {
-            upsert: true,
-            new: true,
-        });
-        const message = {
-            notification: {
-                title: "Call is Completed from" + req.body.from,
-                body: "Completed",
-            },
-            data: {
-                number: req.body.from,
-            },
-            android: {
-                priority: "high",
-            },
-            topic: "calls",
-            // token: 'fcm_token',
-        };
-        firebaseAdmin_1.default
-            .messaging()
-            .send(message)
-            .then((response) => {
-            console.log("Successfully sent message:", response);
-        })
-            .catch((error) => {
-            console.log("Error sending message:", error);
-        });
-        res.status(200).send("Data saved");
+        try {
+            await ivrdata_1.default.findOneAndUpdate({ uniqueid: req.query.uniqueid }, {
+                from: req.query.from,
+                time: req.query.time,
+                agent_name: req.query.agent_name,
+                agent_number: req.query.agent_number,
+                to: req.query.to,
+                uniqueid: req.query.uniqueid,
+                unix: req.query.unix,
+                status: req.query.status,
+                total_duration: req.query.total_duration,
+                agent_duration: req.query.agent_duration,
+                operator: req.query.operator,
+                circle: req.query.circle,
+                extension: req.query.extension,
+                recording: req.query.recording
+            }, {
+                upsert: true,
+                new: true,
+            });
+            const message = {
+                notification: {
+                    title: "Call is Completed from" + req.body.from,
+                    body: "Completed",
+                },
+                data: {
+                    number: req.body.from,
+                },
+                android: {
+                    priority: "high",
+                },
+                topic: "calls",
+                // token: 'fcm_token',
+            };
+            try {
+                firebaseAdmin_1.default
+                    .messaging()
+                    .send(message)
+                    .then((response) => {
+                    console.log("Successfully sent message:", response);
+                })
+                    .catch((error) => {
+                    console.log("Error sending message:", error);
+                });
+            }
+            catch (error) {
+                console.log(error);
+            }
+            res.status(200).send("Data saved");
+        }
+        catch (error) {
+            res.status(500).json({ error: "Error creating call", message: error.message });
+        }
     }
     async getLastCall(req, res) {
         try {

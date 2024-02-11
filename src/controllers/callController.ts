@@ -50,93 +50,109 @@ class CallController {
   }
 
   public async createIVRPre(req: Request, res: Response): Promise<void> {
-    const newData = new ivrdata({
-      from: req.query.from,
-      time: req.query.time,
-      agent_name: req.query.agent_name,
-      agent_number: req.query.agent_number,
-      to: req.query.to,
-      uniqueid: req.query.uniqueid,
-      unix: req.query.unix,
-      status: req.query.status,
-      total_duration: req.query.total_duration,
-      agent_duration: req.query.agent_duration,
-      operator: req.query.operator,
-      circle: req.query.circle,
-      extension: req.query.extension,
-      recording: req.query.recording
-    });
-    await newData.save()
-    const message: Message = {
-      notification: {
-        title: "Call is Coming from" + req.body.from,
-        body: "Please pick up the call",
-      },
-      data: {
-        number: req.body.from,
-      },
-      android: {
-        priority: "high",
-      },
-      topic: "calls",
-      // token: 'fcm_token',
-    };
-    admin
-      .messaging()
-      .send(message)
-      .then((response) => {
-        console.log("Successfully sent message:", response);
-      })
-      .catch((error) => {
-        console.log("Error sending message:", error);
+    try {
+      const newData = new ivrdata({
+        from: req.query.from,
+        time: req.query.time,
+        agent_name: req.query.agent_name,
+        agent_number: req.query.agent_number,
+        to: req.query.to,
+        uniqueid: req.query.uniqueid,
+        unix: req.query.unix,
+        status: req.query.status,
+        total_duration: req.query.total_duration,
+        agent_duration: req.query.agent_duration,
+        operator: req.query.operator,
+        circle: req.query.circle,
+        extension: req.query.extension,
+        recording: req.query.recording
       });
-    res.status(200).send("Data saved")
+      await newData.save()
+      const message: Message = {
+        notification: {
+          title: "Call is Coming from" + req.body.from,
+          body: "Please pick up the call",
+        },
+        data: {
+          number: req.body.from,
+        },
+        android: {
+          priority: "high",
+        },
+        topic: "calls",
+        // token: 'fcm_token',
+      };
+      try {
+        admin
+          .messaging()
+          .send(message)
+          .then((response) => {
+            console.log("Successfully sent message:", response);
+          })
+          .catch((error) => {
+            console.log("Error sending message:", error);
+          });
+      } catch (error) {
+        console.log(error)
+      }
+      res.status(200).send("Data saved")
+    } catch (error: any) {
+      res.status(500).json({ error: "Error creating call", message: error.message });
+    }
   }
   public async createIVRPost(req: Request, res: Response): Promise<void> {
+    try {
 
-    await ivrdata.findOneAndUpdate({ uniqueid: req.query.uniqueid }, {
-      from: req.query.from,
-      time: req.query.time,
-      agent_name: req.query.agent_name,
-      agent_number: req.query.agent_number,
-      to: req.query.to,
-      uniqueid: req.query.uniqueid,
-      unix: req.query.unix,
-      status: req.query.status,
-      total_duration: req.query.total_duration,
-      agent_duration: req.query.agent_duration,
-      operator: req.query.operator,
-      circle: req.query.circle,
-      extension: req.query.extension,
-      recording: req.query.recording
-    }, {
-      upsert: true,
-      new: true,
-    });
-    const message: Message = {
-      notification: {
-        title: "Call is Completed from" + req.body.from,
-        body: "Completed",
-      },
-      data: {
-        number: req.body.from,
-      },
-      android: {
-        priority: "high",
-      },
-      topic: "calls",
-      // token: 'fcm_token',
-    };
-    admin
-      .messaging()
-      .send(message)
-      .then((response) => {
-        console.log("Successfully sent message:", response);
-      })
-      .catch((error) => {
-        console.log("Error sending message:", error);
+      await ivrdata.findOneAndUpdate({ uniqueid: req.query.uniqueid }, {
+        from: req.query.from,
+        time: req.query.time,
+        agent_name: req.query.agent_name,
+        agent_number: req.query.agent_number,
+        to: req.query.to,
+        uniqueid: req.query.uniqueid,
+        unix: req.query.unix,
+        status: req.query.status,
+        total_duration: req.query.total_duration,
+        agent_duration: req.query.agent_duration,
+        operator: req.query.operator,
+        circle: req.query.circle,
+        extension: req.query.extension,
+        recording: req.query.recording
+      }, {
+        upsert: true,
+        new: true,
       });
-    res.status(200).send("Data saved")
+      const message: Message = {
+        notification: {
+          title: "Call is Completed from" + req.body.from,
+          body: "Completed",
+        },
+        data: {
+          number: req.body.from,
+        },
+        android: {
+          priority: "high",
+        },
+        topic: "calls",
+        // token: 'fcm_token',
+      };
+      try {
+        admin
+          .messaging()
+          .send(message)
+          .then((response) => {
+            console.log("Successfully sent message:", response);
+          })
+          .catch((error) => {
+            console.log("Error sending message:", error);
+          });
+      } catch (error) {
+        console.log(error)
+      }
+      res.status(200).send("Data saved")
+    } catch (error: any) {
+      res.status(500).json({ error: "Error creating call", message: error.message });
+    }
   }
 
   public async getLastCall(req: Request, res: Response): Promise<void> {
