@@ -7,6 +7,7 @@ const callModel_1 = __importDefault(require("../models/callModel"));
 const firebaseAdmin_1 = __importDefault(require("../services/firebaseAdmin"));
 const callModel_2 = __importDefault(require("../models/callModel"));
 const contactModel_1 = __importDefault(require("../models/contactModel"));
+const ivrdata_1 = __importDefault(require("../models/ivrdata"));
 class CallController {
     async createCall(req, res) {
         try {
@@ -48,6 +49,26 @@ class CallController {
             console.log(error);
             res.status(500).json({ error: error.message });
         }
+    }
+    async createIVR(req, res) {
+        const newData = new ivrdata_1.default({
+            from: req.query.from,
+            time: req.query.time,
+            agent_name: req.query.agent_name,
+            agent_number: req.query.agent_number,
+            to: req.query.to,
+            uniqueid: req.query.uniqueid,
+            unix: req.query.unix,
+            status: req.query.status,
+            total_duration: req.query.total_duration,
+            agent_duration: req.query.agent_duration,
+            operator: req.query.operator,
+            circle: req.query.circle,
+            extension: req.query.extension,
+            recording: req.query.recording
+        });
+        await newData.save();
+        res.status(200).send("Data saved");
     }
     async getLastCall(req, res) {
         try {

@@ -5,6 +5,7 @@ import { Message } from "firebase-admin/lib/messaging/messaging-api";
 import callModel from "../models/callModel";
 import { stringify } from "querystring";
 import contactModel from "../models/contactModel";
+import ivrdata from "../models/ivrdata";
 
 class CallController {
   public async createCall(req: Request, res: Response): Promise<void> {
@@ -48,6 +49,27 @@ class CallController {
       console.log(error);
       res.status(500).json({ error: error.message });
     }
+  }
+
+  public async createIVR(req: Request, res: Response): Promise<void> {
+    const newData = new ivrdata({
+      from: req.query.from,
+      time: req.query.time,
+      agent_name: req.query.agent_name,
+      agent_number: req.query.agent_number,
+      to: req.query.to,
+      uniqueid: req.query.uniqueid,
+      unix: req.query.unix,
+      status: req.query.status,
+      total_duration: req.query.total_duration,
+      agent_duration: req.query.agent_duration,
+      operator: req.query.operator,
+      circle: req.query.circle,
+      extension: req.query.extension,
+      recording: req.query.recording
+    });
+    await newData.save()
+    res.status(200).send("Data saved")
   }
 
   public async getLastCall(req: Request, res: Response): Promise<void> {

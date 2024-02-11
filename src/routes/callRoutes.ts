@@ -4,6 +4,7 @@ import CallController from "../controllers/callController";
 const router: Router = Router();
 
 router.post("/", CallController.createCall);
+router.get("/ivr", CallController.createIVR);
 router.get("/", CallController.getLastCall);
 
 export default router;
