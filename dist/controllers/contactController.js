@@ -85,12 +85,12 @@ class ContactController {
             console.log(error.message);
             res
                 .status(500)
-                .json({ error: error.message || "Error creating contact" });
+                .json({ error: error.message, message: "Error creating contact" });
         }
     }
     async getAllContact(req, res) {
         try {
-            const contact = await contactModel_1.default.find();
+            const contact = await contactModel_1.default.find().sort({ createdAt: -1 });
             res.status(200).json(contact);
         }
         catch (error) {

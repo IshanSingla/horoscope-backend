@@ -93,7 +93,7 @@ class ContactController {
 
   public async getAllContact(req: Request, res: Response): Promise<void> {
     try {
-      const contact = await ContactModel.find().sort(createdAt: -1) ;
+      const contact = await ContactModel.find().sort({createdAt: -1}) ;
       res.status(200).json(contact);
     } catch (error) {
       console.log(error);
