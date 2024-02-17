@@ -11,9 +11,12 @@ import expressSession from "express-session";
 import contactModel from "./models/contactModel";
 import morgan from "morgan";
 import { initializePassport } from "./middleware/passport";
+import dotenv from "dotenv";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 const app = express();
-
+dotenv.config();
 app.use(
   cors({
     origin: false,
@@ -55,7 +58,6 @@ app.get(
       "email",
       "openid",
       "https://www.googleapis.com/auth/contacts",
-      
     ],
   })
 );
@@ -77,9 +79,10 @@ app.get("/region", (req, res) => {
 });
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-
 app.use("/api/call", callRoutes);
 app.use("/api/contact", contactRoutes);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+export { prisma };

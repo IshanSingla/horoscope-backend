@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+type ContactsPlaceOfBirth {
+  description String?
+  latitude    Json?
+  longitude   Json?
+}
+
+model auths {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  accessToken String
+  createdAt   DateTime @db.Date
+  email       String
+  name        String
+  updatedAt   DateTime @db.Date
+}
+
+model calls {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  calledAt      DateTime @db.Date
+  mobile_number String
+}
+
+model contacts {
+  id              String               @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt       DateTime             @db.Date
+  dob             DateTime             @db.Date
+  gender          String?
+  last_fetched    DateTime?            
+  mobile_number   String               @unique(map: "mobile_number_1")
+  name            String?
+  place_of_birth  ContactsPlaceOfBirth
+  series_number   Int
+  updatedAt       DateTime             @db.Date
+  whatsapp_number String
+}
+
+model ivrs {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  agent_duration String?
+  agent_name     String?
+  agent_number   String?
+  circle         String?
+  createdAt      DateTime @db.Date
+  extension      String?
+  from           String?
+  operator       String?
+  recording      String?
+  status         String?
+  time           String?
+  to             String?
+  total_duration String?
+  uniqueid       String?
+  unix           String?
+  updatedAt      DateTime @db.Date
+}

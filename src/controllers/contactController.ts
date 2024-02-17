@@ -2,58 +2,60 @@ import { Request, Response } from "express";
 import ContactModel, { Contact } from "../models/contactModel";
 import authModal from "../models/authModal";
 import axios from "axios";
+import { prisma } from "..";
 
 class ContactController {
   public async createContact(req: Request, res: Response): Promise<void> {
     try {
-      const contactExist = await ContactModel.findOne({
-        mobile_number: req.body.mobile_number,
+      const existingContact = await prisma.contacts.findUnique({
+        where: { mobile_number: req.body.mobile_number },
       });
-      if (contactExist) {
-        res
-          .status(200)
-          .json({ message: "Contact already created!", contact: contactExist });
+      if (existingContact) {
+        res.status(200).json({
+          message: "Contact already created!",
+          contact: existingContact,
+        });
         return;
       }
-      const contact = new ContactModel(req.body);
-      const savedContact = await contact.save();
-      const auth = await authModal.findOne({});
+      const newContact = await prisma.contacts.create({ data: req.body });
+      const auth = await prisma.auths.findFirst({});
+
       const accessToken = auth?.accessToken;
 
       const contactData = {
         names: [
           {
-            givenName: `${savedContact.name ?? "-"}`,
+            givenName: `${newContact.name ?? "-"}`,
           },
         ],
         phoneNumbers: [
           {
-            value: savedContact.mobile_number,
+            value: newContact.mobile_number,
             type: "Mobile Number",
           },
           {
             type: "WhatsApp Number",
-            value: savedContact.whatsapp_number,
+            value: newContact.whatsapp_number,
           },
         ],
         birthdays: [
           {
             date: {
-              day: ((savedContact?.dob?.getDate() ?? 0) % 31) + 1, // Ensure day remains within the range 1-31
-              month: (((savedContact?.dob?.getMonth() ?? 0) + 1) % 12) + 1, // Ensure month remains within the range 1-12
-              year: (savedContact?.dob?.getFullYear() ?? 0) + 1,
+              day: ((newContact?.dob?.getDate() ?? 0) % 31) + 1, // Ensure day remains within the range 1-31
+              month: (((newContact?.dob?.getMonth() ?? 0) + 1) % 12) + 1, // Ensure month remains within the range 1-12
+              year: (newContact?.dob?.getFullYear() ?? 0) + 1,
             },
           },
         ],
         addresses: [
           {
             type: "Birth of Place",
-            city: savedContact?.place_of_birth?.description,
+            city: newContact?.place_of_birth?.description,
           },
         ],
         genders: [
           {
-            value: savedContact?.gender,
+            value: newContact?.gender,
           },
         ],
       };
@@ -79,7 +81,7 @@ class ContactController {
 
       res.status(201).json({
         message: "Contact created successfully",
-        contact: savedContact,
+        contact: newContact,
       });
 
       return;
@@ -93,7 +95,7 @@ class ContactController {
 
   public async getAllContact(req: Request, res: Response): Promise<void> {
     try {
-      const contact = await ContactModel.find().sort({createdAt: -1}) ;
+      const contact = await prisma.contacts.findMany();
       res.status(200).json(contact);
     } catch (error) {
       console.log(error);
@@ -103,7 +105,10 @@ class ContactController {
 
   public async getContact(req: Request, res: Response): Promise<void> {
     try {
-      const contact = await ContactModel.findOne({ _id: req.params.id });
+      const contact = await prisma.contacts.findUnique({
+        where: { id: req.params.id },
+      });
+
       res.status(200).json(contact);
     } catch (error) {
       res.status(500).json({ error: "Error retrieving contact" });
@@ -112,13 +117,13 @@ class ContactController {
 
   public async updateContact(req: Request, res: Response): Promise<void> {
     try {
-      const updatedContact = await ContactModel.findByIdAndUpdate(
-        req.params.id,
-        { updatedAt: new Date(), ...req.body },
-        {
-          new: true,
-        }
-      );
+      const updatedContact = await prisma.contacts.update({
+        where: { id: req.params.id },
+        data: {
+          ...req.body,
+          updatedAt: new Date(),
+        },
+      });
       res.status(200).json({ message: "Contact updated", updatedContact });
     } catch (error) {
       console.log(error);
@@ -128,7 +133,9 @@ class ContactController {
 
   public async deleteContact(req: Request, res: Response): Promise<void> {
     try {
-      await ContactModel.findByIdAndDelete(req.params.id);
+      await prisma.contacts.delete({
+        where: { id: req.params.id },
+      });
       res.status(204).json({
         message: "Contact Deleted",
       });
@@ -139,24 +146,31 @@ class ContactController {
 
   public async getNewContacts(request: Request, response: Response) {
     try {
-      const nonFetchedContacts: Contact[] = await ContactModel.find({
-        last_fetched: { $eq: null },
+      const nonFetchedContacts = await prisma.contacts.findMany({
+        where: { last_fetched: null },
       });
-      await Promise.all(nonFetchedContacts.map(async (contact) => {
-        contact.last_fetched = new Date();
-        await contact.save();
-      }));
+
+      await prisma.$transaction(async (tx) => {
+        for (const contact of nonFetchedContacts) {
+          await tx.contacts.update({
+            where: { id: contact.id },
+            data: { last_fetched: new Date() },
+          });
+        }
+      });
 
       response.status(200).json({
         message: "Contact retrieved successfully",
         contact: nonFetchedContacts,
       });
     } catch (error: any) {
+      console.error("Error fetching new contacts:", error);
       response.status(500).json({
         error: error.message || "Internal server error",
       });
     }
   }
+
   public async isMobileNumber(req: Request, res: Response): Promise<void> {
     try {
       let mobile_number = req.body.mobile_number;

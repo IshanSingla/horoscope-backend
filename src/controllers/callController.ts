@@ -4,6 +4,7 @@ import admin from "../services/firebaseAdmin";
 import { Message } from "firebase-admin/lib/messaging/messaging-api";
 import contactModel from "../models/contactModel";
 import ivrdata from "../models/ivrdata";
+import { prisma } from "../index";
 
 class CallController {
   public async createCall(req: Request, res: Response): Promise<void> {
@@ -24,7 +25,6 @@ class CallController {
           priority: "high",
         },
         topic: "calls",
-        // token: 'fcm_token',
       };
       admin
         .messaging()
@@ -36,13 +36,13 @@ class CallController {
           console.log("Error sending message:", error);
         });
 
-
-      const call = new CallModel({
-        mobile_number: req.body.mobile_number,
-        calledAt: new Date(),
+      const newCall = await prisma.calls.create({
+        data: {
+          mobile_number: req.body.mobile_number,
+          calledAt: new Date(),
+        },
       });
-      const savedCall = await call.save();
-      res.status(201).json({ message: "call saved", call: savedCall });
+      res.status(201).json({ message: "call saved", call: newCall });
     } catch (error: any) {
       console.log(error);
       res.status(500).json({ error: error.message });
@@ -157,11 +157,16 @@ class CallController {
 
   public async getLastCall(req: Request, res: Response): Promise<void> {
     try {
-      let lastCall = await ivrdata.findOne({}).sort({ createdAt: - 1 });
-      const contact = await contactModel.findOne({
-        mobile_number: lastCall?.from
-      })
-      console.log(contact)
+      const lastCall = await prisma.calls.findFirst({
+        orderBy: {
+          calledAt: "desc",
+        },
+      });
+      const contact = await prisma.contacts.findFirst({
+        where: {
+          mobile_number: lastCall?.mobile_number,
+        },
+      });
       res.status(200).send(contact ?? lastCall);
     } catch (error) {
       res.status(500).json({ error: "Error retrieving call" });
@@ -170,7 +175,7 @@ class CallController {
 
   public async getCall(req: Request, res: Response): Promise<void> {
     try {
-      const call = await CallModel.find();
+      const call = await prisma.calls.findMany();
       res.status(200).json({ call: call });
     } catch (error) {
       res.status(500).json({ error: "Error retrieving call" });
@@ -179,19 +184,27 @@ class CallController {
 
   public async updateCall(req: Request, res: Response): Promise<void> {
     try {
-      const existCall = await CallModel.findById(req.params.id);
+      const existCall = await prisma.calls.findUnique({
+        where: {
+          id: req.params.id,
+        },
+      });
+
       if (!existCall) {
         res.status(404).json({
           message: "Call not found!",
         });
       }
-      const updatedCall = await CallModel.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        {
-          new: true,
-        }
-      );
+      const updatedCall = await prisma.calls.update({
+        where: {
+          id: req.params.id,
+        },
+        data: req.body,
+        select: {
+          id: true,
+          mobile_number: true,
+        },
+      });
       res.status(203).json(updatedCall);
     } catch (error) {
       res.status(500).json({ error: "Error updating call" });
@@ -200,7 +213,11 @@ class CallController {
 
   public async deleteCall(req: Request, res: Response): Promise<void> {
     try {
-      await CallModel.findByIdAndDelete(req.params.id);
+      await prisma.calls.delete({
+        where: {
+          id: req.params.id,
+        },
+      });
       res.status(204).json({
         message: "Call delete successfully",
       });
