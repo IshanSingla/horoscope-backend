@@ -3,18 +3,14 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-type ContactsPlaceOfBirth {
-  description String?
-  latitude    Json?
-  longitude   Json?
-}
 
 model auths {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          Int      @id @default(autoincrement())
   accessToken String
   createdAt   DateTime @db.Date
   email       String
@@ -22,28 +18,24 @@ model auths {
   updatedAt   DateTime @db.Date
 }
 
-model calls {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  calledAt      DateTime @db.Date
-  mobile_number String
-}
-
 model contacts {
-  id              String               @id @default(auto()) @map("_id") @db.ObjectId
+  id              Int                  @id @default(autoincrement())
   createdAt       DateTime             @db.Date
   dob             DateTime             @db.Date
   gender          String?
   last_fetched    DateTime?            
   mobile_number   String               @unique(map: "mobile_number_1")
   name            String?
-  place_of_birth  ContactsPlaceOfBirth
   series_number   Int
   updatedAt       DateTime             @db.Date
   whatsapp_number String
+  pob_description String?
+  pob_latitude Float?
+  pob_longitude Float?
 }
 
 model ivrs {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  id             Int      @id @default(autoincrement())
   agent_duration String?
   agent_name     String?
   agent_number   String?
