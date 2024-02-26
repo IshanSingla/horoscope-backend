@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
-import ContactModel, { Contact } from "../models/contactModel";
-import authModal from "../models/authModal";
 import axios from "axios";
 import { prisma } from "..";
 
 class ContactController {
   public async createContact(req: Request, res: Response): Promise<void> {
+    console.log(req.body);
     try {
       const existingContact = await prisma.contacts.findUnique({
         where: { mobile_number: req.body.mobile_number },
@@ -17,7 +16,22 @@ class ContactController {
         });
         return;
       }
-      const newContact = await prisma.contacts.create({ data: req.body });
+      const newContact = await prisma.contacts.create({
+        data: {
+          mobile_number: req.body.mobile_number,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          dob: new Date(req.body.dob),
+          series_number: req.body.series_number,
+          whatsapp_number: req.body.whatsapp_number,
+          pob_description: req.body.pob_description,
+          pob_latitude: req.body.pob_latitude,
+          pob_longitude: req.body.pob_longitude,
+          gender: req.body.gender,
+          // last_fetched: new Date(),
+          name: req.body.name,
+        },
+      });
       const auth = await prisma.auths.findFirst({});
 
       const accessToken = auth?.accessToken;
@@ -50,7 +64,7 @@ class ContactController {
         addresses: [
           {
             type: "Birth of Place",
-            city: newContact?.place_of_birth?.description,
+            city: newContact?.pob_description,
           },
         ],
         genders: [
@@ -89,36 +103,34 @@ class ContactController {
       console.log(error.message);
       res
         .status(500)
-        .json({ error: error.message, message:  "Error creating contact" });
-    }
-  }
-
-  public async getAllContact(req: Request, res: Response): Promise<void> {
-    try {
-      const contact = await prisma.contacts.findMany();
-      res.status(200).json(contact);
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: "Error retrieving contact" });
+        .json({ error: error.message, message: "Error creating contact" });
     }
   }
 
   public async getContact(req: Request, res: Response): Promise<void> {
     try {
-      const contact = await prisma.contacts.findUnique({
-        where: { id: req.params.id },
-      });
-
+      let contact;
+      const id = req.query.id as string;
+      if (id === undefined) {
+        contact = await prisma.contacts.findMany();
+      } else {
+        contact = await prisma.contacts.findUnique({
+          where: { id: parseInt(id) },
+        });
+      }
       res.status(200).json(contact);
-    } catch (error) {
+      return;
+    } catch (error: any) {
+      console.log(error.message);
       res.status(500).json({ error: "Error retrieving contact" });
     }
   }
 
   public async updateContact(req: Request, res: Response): Promise<void> {
     try {
+      const id = req.params.id as string;
       const updatedContact = await prisma.contacts.update({
-        where: { id: req.params.id },
+        where: { id: parseInt(id) },
         data: {
           ...req.body,
           updatedAt: new Date(),
@@ -133,10 +145,11 @@ class ContactController {
 
   public async deleteContact(req: Request, res: Response): Promise<void> {
     try {
+      const id = req.query.id as string;
       await prisma.contacts.delete({
-        where: { id: req.params.id },
+        where: { id: parseInt(id) },
       });
-      res.status(204).json({
+      res.status(200).json({
         message: "Contact Deleted",
       });
     } catch (error) {
@@ -159,10 +172,7 @@ class ContactController {
         }
       });
 
-      response.status(200).json({
-        message: "Contact retrieved successfully",
-        contact: nonFetchedContacts,
-      });
+      response.status(200).json(nonFetchedContacts);
     } catch (error: any) {
       console.error("Error fetching new contacts:", error);
       response.status(500).json({
