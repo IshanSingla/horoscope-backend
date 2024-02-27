@@ -110,9 +110,8 @@ class CallController {
 
   public async createIVRPost(req: Request, res: Response): Promise<void> {
     try {
-      console.log(req.query.uniqueid);
       const existCall = await ivrdata.findOne({ uniqueid: req.query.uniqueid });
-      if (!existCall) {
+      if (!existCall?.uniqueid) {
         res.status(404).json({ error: "Call not found" });
         return;
       }
