@@ -110,38 +110,42 @@ class CallController {
 
   public async createIVRPost(req: Request, res: Response): Promise<void> {
     try {
-      console.log(req.query.uniqueid)
+      console.log(req.query.uniqueid);
+      const existCall = await ivrdata.findOne({ uniqueid: req.query.uniqueid });
+      if (!existCall) {
+        res.status(404).json({ error: "Call not found" });
+        return;
+      }
       const updatedData = await ivrdata.findOneAndUpdate(
         { uniqueid: req.query.uniqueid },
         {
-          from: req.query.from,
-          time: req.query.time,
-          agent_name: req.query.agent_name,
-          agent_number: req.query.agent_number,
-          to: req.query.to,
-          uniqueid: req.query.uniqueid,
-          unix: req.query.unix,
-          status: req.query.status,
-          total_duration: req.query.total_duration,
-          agent_duration: req.query.agent_duration,
-          operator: req.query.operator,
-          circle: req.query.circle,
-          extension: req.query.extension,
-          recording: req.query.recording,
+          from: req.query.from ?? existCall.from,
+          time: req.query.time ?? existCall.time,
+          agent_name: req.query.agent_name ?? existCall.agent_name,
+          agent_number: req.query.agent_number ?? existCall.agent_number,
+          to: req.query.to ?? existCall.to,
+          uniqueid: req.query.uniqueid ?? existCall.uniqueid,
+          unix: req.query.unix ?? existCall.unix,
+          status: req.query.status ?? existCall.status,
+          total_duration: req.query.total_duration ?? existCall.total_duration,
+          agent_duration: req.query.agent_duration ?? existCall.agent_duration,
+          operator: req.query.operator ?? existCall.operator,
+          circle: req.query.circle ?? existCall.circle,
+          extension: req.query.extension ?? existCall.extension,
+          recording: req.query.recording ?? existCall.recording,
         },
         {
           upsert: true,
           new: true,
         }
       );
-      console.log(updatedData)
       const message: Message = {
         notification: {
-          title: "Call is Completed from" + req.body.from,
+          title: (("Call is Completed from" + req.body.from) as string) ?? "",
           body: "Completed",
         },
         data: {
-          number: req.body.from,
+          number: (req.body.from as string) ?? "",
         },
         android: {
           priority: "high",
@@ -162,7 +166,10 @@ class CallController {
       } catch (error) {
         console.log(error);
       }
-      res.status(200).send("Data saved");
+      res.status(200).json({
+        message: "Data updated",
+        data: updatedData,
+      });
     } catch (error: any) {
       res
         .status(500)
@@ -179,7 +186,7 @@ class CallController {
       });
       const contact = await prisma.contacts.findFirst({
         where: {
-          mobile_number: lastCall?.agent_number ?? "", // Add null check here and provide a default value
+          mobile_number: lastCall?.agent_number ?? "",
         },
       });
       res.status(200).send(contact ?? lastCall);
