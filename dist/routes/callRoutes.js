@@ -8,5 +8,6 @@ const callController_1 = __importDefault(require("../controllers/callController"
 const router = (0, express_1.Router)();
 router.get("/ivr/pre", callController_1.default.createIVRPre);
 router.get("/ivr/post", callController_1.default.createIVRPost);
-router.get("/ivr", callController_1.default.getLastCall);
+// router.get("/ivr", CallController.getLastCall);
 exports.default = router;
+console.log(process.env.DATABASE_URL);

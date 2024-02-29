@@ -3,59 +3,74 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const contactModel_1 = __importDefault(require("../models/contactModel"));
-const authModal_1 = __importDefault(require("../models/authModal"));
 const axios_1 = __importDefault(require("axios"));
+const __1 = require("..");
 class ContactController {
     async createContact(req, res) {
+        console.log(req.body);
         try {
-            const contactExist = await contactModel_1.default.findOne({
-                mobile_number: req.body.mobile_number,
+            const existingContact = await __1.prisma.contacts.findUnique({
+                where: { mobile_number: req.body.mobile_number },
             });
-            if (contactExist) {
-                res
-                    .status(200)
-                    .json({ message: "Contact already created!", contact: contactExist });
+            if (existingContact) {
+                res.status(200).json({
+                    message: "Contact already created!",
+                    contact: existingContact,
+                });
                 return;
             }
-            const contact = new contactModel_1.default(req.body);
-            const savedContact = await contact.save();
-            const auth = await authModal_1.default.findOne({});
+            const newContact = await __1.prisma.contacts.create({
+                data: {
+                    mobile_number: req.body.mobile_number,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    dob: new Date(req.body.dob),
+                    series_number: req.body.series_number,
+                    whatsapp_number: req.body.whatsapp_number,
+                    pob_description: req.body.pob_description,
+                    pob_latitude: req.body.pob_latitude,
+                    pob_longitude: req.body.pob_longitude,
+                    gender: req.body.gender,
+                    // last_fetched: new Date(),
+                    name: req.body.name,
+                },
+            });
+            const auth = await __1.prisma.auths.findFirst({});
             const accessToken = auth?.accessToken;
             const contactData = {
                 names: [
                     {
-                        givenName: `${savedContact.name ?? "-"}`,
+                        givenName: `${newContact.name ?? "-"}`,
                     },
                 ],
                 phoneNumbers: [
                     {
-                        value: savedContact.mobile_number,
+                        value: newContact.mobile_number,
                         type: "Mobile Number",
                     },
                     {
                         type: "WhatsApp Number",
-                        value: savedContact.whatsapp_number,
+                        value: newContact.whatsapp_number,
                     },
                 ],
                 birthdays: [
                     {
                         date: {
-                            day: ((savedContact?.dob?.getDate() ?? 0) % 31) + 1, // Ensure day remains within the range 1-31
-                            month: (((savedContact?.dob?.getMonth() ?? 0) + 1) % 12) + 1, // Ensure month remains within the range 1-12
-                            year: (savedContact?.dob?.getFullYear() ?? 0) + 1,
+                            day: ((newContact?.dob?.getDate() ?? 0) % 31) + 1, // Ensure day remains within the range 1-31
+                            month: (((newContact?.dob?.getMonth() ?? 0) + 1) % 12) + 1, // Ensure month remains within the range 1-12
+                            year: (newContact?.dob?.getFullYear() ?? 0) + 1,
                         },
                     },
                 ],
                 addresses: [
                     {
                         type: "Birth of Place",
-                        city: savedContact?.place_of_birth?.description,
+                        city: newContact?.pob_description,
                     },
                 ],
                 genders: [
                     {
-                        value: savedContact?.gender,
+                        value: newContact?.gender,
                     },
                 ],
             };
@@ -75,10 +90,7 @@ class ContactController {
             catch (error) {
                 console.log(error?.response?.data);
             }
-            res.status(201).json({
-                message: "Contact created successfully",
-                contact: savedContact,
-            });
+            res.status(201).json(newContact);
             return;
         }
         catch (error) {
@@ -88,31 +100,37 @@ class ContactController {
                 .json({ error: error.message, message: "Error creating contact" });
         }
     }
-    async getAllContact(req, res) {
-        try {
-            const contact = await contactModel_1.default.find().sort({ createdAt: -1 });
-            res.status(200).json(contact);
-        }
-        catch (error) {
-            console.log(error);
-            res.status(500).json({ error: "Error retrieving contact" });
-        }
-    }
     async getContact(req, res) {
         try {
-            const contact = await contactModel_1.default.findOne({ _id: req.params.id });
+            let contact;
+            const id = req.query.id;
+            if (id === undefined) {
+                contact = await __1.prisma.contacts.findMany();
+            }
+            else {
+                contact = await __1.prisma.contacts.findUnique({
+                    where: { id: parseInt(id) },
+                });
+            }
             res.status(200).json(contact);
+            return;
         }
         catch (error) {
+            console.log(error.message);
             res.status(500).json({ error: "Error retrieving contact" });
         }
     }
     async updateContact(req, res) {
         try {
-            const updatedContact = await contactModel_1.default.findByIdAndUpdate(req.params.id, { updatedAt: new Date(), ...req.body }, {
-                new: true,
+            const id = req.params.id;
+            const updatedContact = await __1.prisma.contacts.update({
+                where: { id: parseInt(id) },
+                data: {
+                    ...req.body,
+                    updatedAt: new Date(),
+                },
             });
-            res.status(200).json({ message: "Contact updated", updatedContact });
+            res.status(200).json(updatedContact);
         }
         catch (error) {
             console.log(error);
@@ -121,8 +139,11 @@ class ContactController {
     }
     async deleteContact(req, res) {
         try {
-            await contactModel_1.default.findByIdAndDelete(req.params.id);
-            res.status(204).json({
+            const id = req.query.id;
+            await __1.prisma.contacts.delete({
+                where: { id: parseInt(id) },
+            });
+            res.status(200).json({
                 message: "Contact Deleted",
             });
         }
@@ -132,19 +153,21 @@ class ContactController {
     }
     async getNewContacts(request, response) {
         try {
-            const nonFetchedContacts = await contactModel_1.default.find({
-                last_fetched: { $eq: null },
+            const nonFetchedContacts = await __1.prisma.contacts.findMany({
+                where: { last_fetched: null },
             });
-            await Promise.all(nonFetchedContacts.map(async (contact) => {
-                contact.last_fetched = new Date();
-                await contact.save();
-            }));
-            response.status(200).json({
-                message: "Contact retrieved successfully",
-                contact: nonFetchedContacts,
+            await __1.prisma.$transaction(async (tx) => {
+                for (const contact of nonFetchedContacts) {
+                    await tx.contacts.update({
+                        where: { id: contact.id },
+                        data: { last_fetched: new Date() },
+                    });
+                }
             });
+            response.status(200).json(nonFetchedContacts);
         }
         catch (error) {
+            console.error("Error fetching new contacts:", error);
             response.status(500).json({
                 error: error.message || "Internal server error",
             });

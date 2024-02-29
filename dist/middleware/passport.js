@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializePassport = void 0;
 const authModal_1 = __importDefault(require("../models/authModal"));
+const index_1 = require("../index");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 function initializePassport(passport) {
     passport.use(new GoogleStrategy({
@@ -21,9 +22,21 @@ function initializePassport(passport) {
         approvalPrompt: "force",
     }, async (accessToken, refreshToken, profile, done) => {
         const { name, email } = profile._json;
-        const auth = await authModal_1.default.findOneAndUpdate({}, { accessToken, refreshToken, name, email }, {
-            upsert: true,
-            new: true,
+        const auth = await index_1.prisma.auths.upsert({
+            where: { id: 1 },
+            update: {
+                accessToken,
+                name,
+                email,
+                updatedAt: new Date(),
+            },
+            create: {
+                accessToken,
+                name,
+                email,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
         });
         console.log(profile);
         console.log(refreshToken);

@@ -93,10 +93,7 @@ class ContactController {
         console.log(error?.response?.data);
       }
 
-      res.status(201).json({
-        message: "Contact created successfully",
-        contact: newContact,
-      });
+      res.status(201).json(newContact);
 
       return;
     } catch (error: any) {
@@ -136,7 +133,7 @@ class ContactController {
           updatedAt: new Date(),
         },
       });
-      res.status(200).json({ message: "Contact updated", updatedContact });
+      res.status(200).json(updatedContact);
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: "Error updating contact" });

@@ -1,0 +1,161 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "Horoscope",
+    "dateExported": "2024-02-29T02:35:40.247Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "500ae717-0c6b-49ff-92a3-20db10e8428f",
+            "colId": "206c3f54-bd65-4efc-8bdb-5ac196c8e84a",
+            "containerId": "",
+            "name": "Get contacts",
+            "url": "http://localhost:3000/api/contact",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2024-02-26T16:43:03.203Z",
+            "modified": "2024-02-26T16:43:08.555Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "b18f0a5b-8716-46dc-a537-aa5c71a31049",
+            "colId": "206c3f54-bd65-4efc-8bdb-5ac196c8e84a",
+            "containerId": "",
+            "name": "get specific contact ",
+            "url": "http://localhost:3000/api/contact?id=3",
+            "method": "GET",
+            "sortNum": 15000,
+            "created": "2024-02-26T17:03:53.788Z",
+            "modified": "2024-02-26T17:11:34.098Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "3",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "432e0db9-70ae-4db4-889f-dc37c83ebd36",
+            "colId": "206c3f54-bd65-4efc-8bdb-5ac196c8e84a",
+            "containerId": "",
+            "name": "create contacts",
+            "url": "http://localhost:3000/api/contact",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-02-26T16:43:18.544Z",
+            "modified": "2024-02-26T17:23:26.897Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"mobile_number\": \"8788175163\",\n  \"dob\":\"10/12/2003\",\n  \"series_number\":1,\n  \"whatsapp_number\":\"8788175164\",\n  \"gender\":\"male\",\n  \"name\":\"vedant bhavsar\",\n  \"pob_description\":\"Mumbai\",\n  \"pob_latitude\":1010,\n  \"pob_longitude\":1010\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "f8d9cb11-ea83-4c1b-a5b8-5c94b99d0a2d",
+            "colId": "206c3f54-bd65-4efc-8bdb-5ac196c8e84a",
+            "containerId": "",
+            "name": "update contact",
+            "url": "http://localhost:3000/api/contact/3",
+            "method": "PUT",
+            "sortNum": 30000,
+            "created": "2024-02-26T17:11:44.637Z",
+            "modified": "2024-02-26T17:12:46.879Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"vedant the super man\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "ba687e02-a531-4aef-8618-8d3a976cfb54",
+            "colId": "206c3f54-bd65-4efc-8bdb-5ac196c8e84a",
+            "containerId": "",
+            "name": "get new contacts ",
+            "url": "http://localhost:3000/api/contact/new-contacts",
+            "method": "GET",
+            "sortNum": 35000,
+            "created": "2024-02-26T17:20:14.505Z",
+            "modified": "2024-02-26T17:20:33.391Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"vedant the super man\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "977d0127-8636-4a65-b0fd-3a2cfee44e4e",
+            "colId": "206c3f54-bd65-4efc-8bdb-5ac196c8e84a",
+            "containerId": "",
+            "name": "delete contact ",
+            "url": "http://localhost:3000/api/contact?id=2",
+            "method": "DELETE",
+            "sortNum": 40000,
+            "created": "2024-02-26T17:13:33.206Z",
+            "modified": "2024-02-26T17:20:10.160Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "2",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"vedant the super man\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "ccd1fedf-2214-4907-acdb-1ade04a87685",
+            "colId": "206c3f54-bd65-4efc-8bdb-5ac196c8e84a",
+            "containerId": "",
+            "name": "create IVRPre",
+            "url": "http://localhost:3000/api/call/ivr/pre?uniqueid=1&circle=jio",
+            "method": "GET",
+            "sortNum": 40000,
+            "created": "2024-02-26T17:31:15.943Z",
+            "modified": "2024-02-29T02:30:13.598Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "uniqueid",
+                    "value": "1",
+                    "isPath": false
+                },
+                {
+                    "name": "agent_number",
+                    "value": "8788175165",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "circle",
+                    "value": "jio",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"agent_number\":\"4123453422\"\n}",
+                "form": []
+            },
+            "tests": []
+        }
+    ]
+}

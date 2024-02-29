@@ -100,7 +100,8 @@ class CallController {
       } catch (error) {
         console.log(error);
       }
-      res.status(200).send("Data saved");
+
+      res.status(200).send(newData);
     } catch (error: any) {
       res
         .status(500)
@@ -110,61 +111,38 @@ class CallController {
 
   public async createIVRPost(req: Request, res: Response): Promise<void> {
     try {
-      const existCall = await ivrdata.findOne({ uniqueid: req.query.uniqueid });
-      if (!existCall?.uniqueid) {
+      const existCall = await prisma.ivrs.findUnique({
+        where: { id: Number(req.query.uniqueid) },
+      });
+      if (!existCall) {
         res.status(404).json({ error: "Call not found" });
         return;
       }
-      const updatedData = await ivrdata.findOneAndUpdate(
-        { uniqueid: req.query.uniqueid },
-        {
-          from: req.query.from ?? existCall.from,
-          time: req.query.time ?? existCall.time,
-          agent_name: req.query.agent_name ?? existCall.agent_name,
-          agent_number: req.query.agent_number ?? existCall.agent_number,
-          to: req.query.to ?? existCall.to,
-          uniqueid: req.query.uniqueid ?? existCall.uniqueid,
-          unix: req.query.unix ?? existCall.unix,
-          status: req.query.status ?? existCall.status,
-          total_duration: req.query.total_duration ?? existCall.total_duration,
-          agent_duration: req.query.agent_duration ?? existCall.agent_duration,
-          operator: req.query.operator ?? existCall.operator,
-          circle: req.query.circle ?? existCall.circle,
-          extension: req.query.extension ?? existCall.extension,
-          recording: req.query.recording ?? existCall.recording,
+      const updatedData = await prisma.ivrs.upsert({
+        where: { id: Number(req.query.uniqueid) },
+        update: {
+          from: (req.query.from as string | undefined) ?? existCall.from,
+          time: req.query.time as string | undefined,
+          agent_name: req.query.agent_name as string | undefined,
+          agent_number: req.query.agent_number as string | undefined,
+          to: req.query.to as string | undefined,
+          uniqueid: req.query.uniqueid as string | undefined,
+          unix: req.query.unix as string | undefined,
+          status: req.query.status as string | undefined,
+          total_duration: req.query.total_duration as string | undefined,
+          agent_duration: req.query.agent_duration as string | undefined,
+          operator: req.query.operator as string | undefined,
+          circle: req.query.circle as string | undefined,
+          extension: req.query.extension as string | undefined,
+          recording: req.query.recording as string | undefined,
         },
-        {
-          upsert: true,
-          new: true,
-        }
-      );
-      const message: Message = {
-        notification: {
-          title: (("Call is Completed from" + req.body.from) as string) ?? "",
-          body: "Completed",
+        create: {
+          agent_number: req.query.agent_number as string,
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
-        data: {
-          number: (req.body.from as string) ?? "",
-        },
-        android: {
-          priority: "high",
-        },
-        topic: "calls",
-        // token: 'fcm_token',
-      };
-      try {
-        admin
-          .messaging()
-          .send(message)
-          .then((response) => {
-            console.log("Successfully sent message:", response);
-          })
-          .catch((error) => {
-            console.log("Error sending message:", error);
-          });
-      } catch (error) {
-        console.log(error);
-      }
+      });
+      // Sending message code here
       res.status(200).json({
         message: "Data updated",
         data: updatedData,
@@ -188,7 +166,7 @@ class CallController {
           mobile_number: lastCall?.agent_number ?? "",
         },
       });
-      res.status(200).send(contact ?? lastCall);
+      res.status(200).json(contact ?? lastCall);
     } catch (error) {
       res.status(500).json({ error: "Error retrieving call" });
     }

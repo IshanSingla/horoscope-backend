@@ -1,5 +1,6 @@
 import { PassportStatic } from "passport";
 import authModal from "../models/authModal";
+import { prisma } from "../index";
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 export function initializePassport(passport: PassportStatic): void {
@@ -27,14 +28,23 @@ export function initializePassport(passport: PassportStatic): void {
       ) => {
         const { name, email } = profile._json;
 
-        const auth = await authModal.findOneAndUpdate(
-          {},
-          { accessToken, refreshToken, name, email },
-          {
-            upsert: true,
-            new: true,
-          }
-        );
+        const auth = await prisma.auths.upsert({
+          where: { id: 1 },
+          update: {
+            accessToken,
+            name,
+            email,
+            updatedAt: new Date(),
+          },
+          create: {
+            accessToken,
+            name,
+            email,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        });
+
         console.log(profile);
         console.log(refreshToken);
         return done(null, auth);
