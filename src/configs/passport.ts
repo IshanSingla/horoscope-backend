@@ -9,7 +9,7 @@ passport.use(
       clientID:
         "377941489644-18up92381d1o35hv5nakjhv8637gv2v4.apps.googleusercontent.com",
       clientSecret: "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",
-      callbackURL: "https://horoscope-backend.vercel.app/google/callback",
+      callbackURL: "https://freeastrologyoncall.vercel.app/google/callback",
       scope: [
         "profile",
         "email",
@@ -32,6 +32,9 @@ passport.use(
       });
 
       const auth = await prisma.auths.upsert({
+        where: {
+          id: lastAuth?.id??""
+        },
         update: {
           accessToken,
           name,
@@ -45,9 +48,6 @@ passport.use(
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-        where: {
-          id: lastAuth?.id
-        }
       });
 
 

@@ -11,7 +11,7 @@ exports.passport = passport_1.default;
 passport_1.default.use(new GoogleStrategy({
     clientID: "377941489644-18up92381d1o35hv5nakjhv8637gv2v4.apps.googleusercontent.com",
     clientSecret: "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",
-    callbackURL: "https://horoscope-backend.vercel.app/google/callback",
+    callbackURL: "https://freeastrologyoncall.vercel.app/google/callback",
     scope: [
         "profile",
         "email",
@@ -27,6 +27,9 @@ passport_1.default.use(new GoogleStrategy({
         take: 1,
     });
     const auth = await prisma_1.prisma.auths.upsert({
+        where: {
+            id: lastAuth?.id ?? ""
+        },
         update: {
             accessToken,
             name,
@@ -40,9 +43,6 @@ passport_1.default.use(new GoogleStrategy({
             createdAt: new Date(),
             updatedAt: new Date(),
         },
-        where: {
-            id: lastAuth?.id
-        }
     });
     console.log(profile);
     console.log(refreshToken);
