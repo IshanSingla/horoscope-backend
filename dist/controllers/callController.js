@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const firebaseAdmin_1 = __importDefault(require("../services/firebaseAdmin"));
-const index_1 = require("../index");
+const prisma_1 = require("../configs/prisma");
 class CallController {
     async createCall(req, res) {
         try {
@@ -34,7 +34,7 @@ class CallController {
                 .catch((error) => {
                 console.log("Error sending message:", error);
             });
-            const newCall = await index_1.prisma.ivrs.create({
+            const newCall = await prisma_1.prisma.ivrs.create({
                 data: {
                     agent_number: req.body.mobile_number,
                     createdAt: new Date(),
@@ -50,7 +50,7 @@ class CallController {
     }
     async createIVRPre(req, res) {
         try {
-            const newData = await index_1.prisma.ivrs.create({
+            const newData = await prisma_1.prisma.ivrs.create({
                 data: {
                     from: req.query.from ?? undefined,
                     time: req.query.time ?? undefined,
@@ -109,14 +109,14 @@ class CallController {
     }
     async createIVRPost(req, res) {
         try {
-            const existCall = await index_1.prisma.ivrs.findUnique({
+            const existCall = await prisma_1.prisma.ivrs.findUnique({
                 where: { id: Number(req.query.uniqueid) },
             });
             if (!existCall) {
                 res.status(404).json({ error: "Call not found" });
                 return;
             }
-            const updatedData = await index_1.prisma.ivrs.upsert({
+            const updatedData = await prisma_1.prisma.ivrs.upsert({
                 where: { id: Number(req.query.uniqueid) },
                 update: {
                     from: req.query.from ?? existCall.from,
@@ -154,12 +154,12 @@ class CallController {
     }
     async getLastCall(req, res) {
         try {
-            const lastCall = await index_1.prisma.ivrs.findFirst({
+            const lastCall = await prisma_1.prisma.ivrs.findFirst({
                 orderBy: {
                     createdAt: "desc",
                 },
             });
-            const contact = await index_1.prisma.contacts.findFirst({
+            const contact = await prisma_1.prisma.contacts.findFirst({
                 where: {
                     mobile_number: lastCall?.agent_number ?? "",
                 },
@@ -172,7 +172,7 @@ class CallController {
     }
     async getCall(req, res) {
         try {
-            const call = await index_1.prisma.ivrs.findMany();
+            const call = await prisma_1.prisma.ivrs.findMany();
             res.status(200).json({ call: call });
         }
         catch (error) {
@@ -181,7 +181,7 @@ class CallController {
     }
     async updateCall(req, res) {
         try {
-            const existCall = await index_1.prisma.ivrs.findUnique({
+            const existCall = await prisma_1.prisma.ivrs.findUnique({
                 where: {
                     id: parseInt(req.params.id),
                 },
@@ -191,7 +191,7 @@ class CallController {
                     message: "Call not found!",
                 });
             }
-            const updatedCall = await index_1.prisma.ivrs.update({
+            const updatedCall = await prisma_1.prisma.ivrs.update({
                 where: {
                     id: parseInt(req.params.id),
                 },
@@ -209,7 +209,7 @@ class CallController {
     }
     async deleteCall(req, res) {
         try {
-            await index_1.prisma.ivrs.delete({
+            await prisma_1.prisma.ivrs.delete({
                 where: {
                     id: parseInt(req.params.id),
                 },

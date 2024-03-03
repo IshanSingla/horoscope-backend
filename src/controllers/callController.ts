@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
-import CallModel from "../models/callModel";
 import admin from "../services/firebaseAdmin";
 import { Message } from "firebase-admin/lib/messaging/messaging-api";
-import contactModel from "../models/contactModel";
-import ivrdata from "../models/ivrdata";
-import { prisma } from "../index";
+import { prisma } from "../configs/prisma";
 
 class CallController {
   public async createCall(req: Request, res: Response): Promise<void> {

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import axios from "axios";
-import { prisma } from "..";
+import { prisma } from "../configs/prisma";
 
 class ContactController {
   public async createContact(req: Request, res: Response): Promise<void> {

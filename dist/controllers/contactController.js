@@ -4,12 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
-const __1 = require("..");
+const prisma_1 = require("../configs/prisma");
 class ContactController {
     async createContact(req, res) {
         console.log(req.body);
         try {
-            const existingContact = await __1.prisma.contacts.findUnique({
+            const existingContact = await prisma_1.prisma.contacts.findUnique({
                 where: { mobile_number: req.body.mobile_number },
             });
             if (existingContact) {
@@ -19,7 +19,7 @@ class ContactController {
                 });
                 return;
             }
-            const newContact = await __1.prisma.contacts.create({
+            const newContact = await prisma_1.prisma.contacts.create({
                 data: {
                     mobile_number: req.body.mobile_number,
                     createdAt: new Date(),
@@ -35,7 +35,7 @@ class ContactController {
                     name: req.body.name,
                 },
             });
-            const auth = await __1.prisma.auths.findFirst({});
+            const auth = await prisma_1.prisma.auths.findFirst({});
             const accessToken = auth?.accessToken;
             const contactData = {
                 names: [
@@ -105,10 +105,10 @@ class ContactController {
             let contact;
             const id = req.query.id;
             if (id === undefined) {
-                contact = await __1.prisma.contacts.findMany();
+                contact = await prisma_1.prisma.contacts.findMany();
             }
             else {
-                contact = await __1.prisma.contacts.findUnique({
+                contact = await prisma_1.prisma.contacts.findUnique({
                     where: { id: parseInt(id) },
                 });
             }
@@ -123,7 +123,7 @@ class ContactController {
     async updateContact(req, res) {
         try {
             const id = req.params.id;
-            const updatedContact = await __1.prisma.contacts.update({
+            const updatedContact = await prisma_1.prisma.contacts.update({
                 where: { id: parseInt(id) },
                 data: {
                     ...req.body,
@@ -140,7 +140,7 @@ class ContactController {
     async deleteContact(req, res) {
         try {
             const id = req.query.id;
-            await __1.prisma.contacts.delete({
+            await prisma_1.prisma.contacts.delete({
                 where: { id: parseInt(id) },
             });
             res.status(200).json({
@@ -153,10 +153,10 @@ class ContactController {
     }
     async getNewContacts(request, response) {
         try {
-            const nonFetchedContacts = await __1.prisma.contacts.findMany({
+            const nonFetchedContacts = await prisma_1.prisma.contacts.findMany({
                 where: { last_fetched: null },
             });
-            await __1.prisma.$transaction(async (tx) => {
+            await prisma_1.prisma.$transaction(async (tx) => {
                 for (const contact of nonFetchedContacts) {
                     await tx.contacts.update({
                         where: { id: contact.id },
