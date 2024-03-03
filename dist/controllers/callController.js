@@ -8,7 +8,6 @@ const prisma_1 = require("../configs/prisma");
 class CallController {
     async createIVRPre(req, res) {
         try {
-            console.log(new Date(Date.now()));
             const newData = await prisma_1.prisma.ivrs.create({
                 data: {
                     id: req.query.uniqueid ?? undefined,
@@ -30,7 +29,6 @@ class CallController {
                     // updatedAt: new Date(Date.now()),
                 },
             });
-            console.log(newData);
             const message = {
                 notification: {
                     title: "Call is Coming from" + req.query.from ?? req.query.agent_number,
@@ -70,13 +68,15 @@ class CallController {
     }
     async createIVRPost(req, res) {
         try {
-            const existCall = await prisma_1.prisma.ivrs.findUnique({
-                where: { id: req.query.uniqueid },
+            const existCall = await prisma_1.prisma.ivrs.findFirst({
+                where: { uniqueid: req.query.uniqueid },
+                orderBy: {
+                    createdAt: "desc",
+                },
             });
             if (!existCall) {
                 const newData = await prisma_1.prisma.ivrs.create({
                     data: {
-                        id: req.query.uniqueid,
                         from: req.query.from ?? undefined,
                         time: req.query.time ?? undefined,
                         agent_name: req.query.agent_name ?? undefined,
@@ -91,8 +91,8 @@ class CallController {
                         circle: req.query.circle ?? undefined,
                         extension: req.query.extension ?? undefined,
                         recording: req.query.recording ?? undefined,
-                        // createdAt: new Date(Date.now()),
-                        // updatedAt: new Date(Date.now()),
+                        createdAt: new Date(Date.now()),
+                        updatedAt: new Date(Date.now()),
                     },
                 });
                 res.status(404).json({ error: "Call not found" });

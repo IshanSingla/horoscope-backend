@@ -7,7 +7,6 @@ class CallController {
 
   public async createIVRPre(req: Request, res: Response): Promise<void> {
     try {
-      console.log(new Date(Date.now()))
       const newData = await prisma.ivrs.create({
         data: {
           id: (req.query.uniqueid as string) ?? undefined,
@@ -29,7 +28,6 @@ class CallController {
           // updatedAt: new Date(Date.now()),
         },
       });
-      console.log(newData);
       const message: Message = {
         notification: {
           title: "Call is Coming from" + req.query.from as string ?? req.query.agent_number as string,
@@ -69,13 +67,15 @@ class CallController {
 
   public async createIVRPost(req: Request, res: Response): Promise<void> {
     try {
-      const existCall = await prisma.ivrs.findUnique({
-        where: { id: req.query.uniqueid as string },
+      const existCall = await prisma.ivrs.findFirst({
+        where: { uniqueid: req.query.uniqueid as string },
+        orderBy: {
+          createdAt: "desc",
+        },
       });
       if (!existCall) {
         const newData = await prisma.ivrs.create({
           data: {
-            id: (req.query.uniqueid as string),
             from: (req.query.from as string) ?? undefined,
             time: (req.query.time as string) ?? undefined,
             agent_name: (req.query.agent_name as string) ?? undefined,
@@ -90,8 +90,8 @@ class CallController {
             circle: (req.query.circle as string) ?? undefined,
             extension: (req.query.extension as string) ?? undefined,
             recording: (req.query.recording as string) ?? undefined,
-            // createdAt: new Date(Date.now()),
-            // updatedAt: new Date(Date.now()),
+            createdAt: new Date(Date.now()),
+            updatedAt: new Date(Date.now()),
           },
         });
         res.status(404).json({ error: "Call not found" });
