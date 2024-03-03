@@ -8,6 +8,7 @@ const prisma_1 = require("../configs/prisma");
 class CallController {
     async createIVRPre(req, res) {
         try {
+            console.log(new Date(Date.now()));
             const newData = await prisma_1.prisma.ivrs.create({
                 data: {
                     from: req.query.from ?? undefined,
@@ -24,8 +25,8 @@ class CallController {
                     circle: req.query.circle ?? undefined,
                     extension: req.query.extension ?? undefined,
                     recording: req.query.recording ?? undefined,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
+                    // createdAt: new Date(Date.now()),
+                    // updatedAt: new Date(Date.now()),
                 },
             });
             console.log(newData);

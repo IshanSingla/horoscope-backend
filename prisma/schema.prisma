@@ -10,46 +10,46 @@ datasource db {
 
 
 model auths {
-  id          Int      @id @default(autoincrement())
-  accessToken String
-  createdAt   DateTime @db.Date
-  email       String
-  name        String
-  updatedAt   DateTime @db.Date
+  id              String               @id @default(uuid())
+  name            String
+  email           String
+  accessToken     String
+  createdAt       DateTime?            @default(now()) @db.Date
+  updatedAt       DateTime?            @updatedAt @db.Date
 }
 
 model contacts {
-  id              Int                  @id @default(autoincrement())
-  createdAt       DateTime             @db.Date
-  dob             DateTime             @db.Date
-  gender          String?
-  last_fetched    DateTime?            
-  mobile_number   String               @unique(map: "mobile_number_1")
+  id              String               @id @default(uuid())      
   name            String?
-  series_number   Int
-  updatedAt       DateTime             @db.Date
+  dob             DateTime?            @db.Date  
+  mobile_number   String               @unique(map: "mobile_number_1")
   whatsapp_number String
+  gender          String?  
+  series_number   Int
   pob_description String?
-  pob_latitude Float?
-  pob_longitude Float?
+  pob_latitude    Float?
+  pob_longitude   Float?  
+  last_fetched    DateTime?            @db.Date
+  createdAt       DateTime?            @default(now()) @db.Date
+  updatedAt       DateTime?            @updatedAt @db.Date
 }
 
 model ivrs {
   id             Int      @id @default(autoincrement())
-  agent_duration String?
-  agent_name     String?
-  agent_number   String?
-  circle         String?
-  createdAt      DateTime @db.Date
-  extension      String?
-  from           String?
-  operator       String?
-  recording      String?
-  status         String?
-  time           String?
-  to             String?
-  total_duration String?
-  uniqueid       String?
-  unix           String?
-  updatedAt      DateTime @db.Date
+  from            String?
+  agent_duration  String?
+  agent_name      String?
+  agent_number    String?
+  circle          String?
+  extension       String?
+  operator        String?
+  recording       String?
+  status          String?
+  time            String?
+  to              String?
+  total_duration  String?
+  uniqueid        String?
+  unix            String?
+  createdAt       DateTime?            @default(now()) @db.Date
+  updatedAt       DateTime?            @updatedAt @db.Date
 }

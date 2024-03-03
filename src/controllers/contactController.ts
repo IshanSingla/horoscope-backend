@@ -111,7 +111,7 @@ class ContactController {
                 contact = await prisma.contacts.findMany();
             } else {
                 contact = await prisma.contacts.findUnique({
-                    where: { id: parseInt(id) },
+                    where: { id: id },
                 });
             }
             res.status(200).json(contact);
@@ -126,7 +126,7 @@ class ContactController {
         try {
             const id = req.params.id as string;
             const updatedContact = await prisma.contacts.update({
-                where: { id: parseInt(id) },
+                where: { id: id },
                 data: {
                     ...req.body,
                     updatedAt: new Date(),
@@ -143,7 +143,7 @@ class ContactController {
         try {
             const id = req.query.id as string;
             await prisma.contacts.delete({
-                where: { id: parseInt(id) },
+                where: { id: id },
             });
             res.status(200).json({
                 message: "Contact Deleted",
