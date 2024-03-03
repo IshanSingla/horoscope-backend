@@ -10,7 +10,6 @@ class CallController {
         try {
             const newData = await prisma_1.prisma.ivrs.create({
                 data: {
-                    id: req.query.uniqueid ?? undefined,
                     from: req.query.from ?? undefined,
                     time: req.query.time ?? undefined,
                     agent_name: req.query.agent_name ?? undefined,
@@ -69,32 +68,12 @@ class CallController {
     async createIVRPost(req, res) {
         try {
             const existCall = await prisma_1.prisma.ivrs.findFirst({
-                where: { uniqueid: req.query.uniqueid },
+                where: { from: "0" + req.query.from },
                 orderBy: {
-                    createdAt: "desc",
+                    time: "desc",
                 },
             });
             if (!existCall) {
-                const newData = await prisma_1.prisma.ivrs.create({
-                    data: {
-                        from: req.query.from ?? undefined,
-                        time: req.query.time ?? undefined,
-                        agent_name: req.query.agent_name ?? undefined,
-                        agent_number: req.query.agent_number ?? undefined,
-                        to: req.query.to ?? undefined,
-                        uniqueid: req.query.uniqueid ?? undefined,
-                        unix: req.query.unix ?? undefined,
-                        status: req.query.status ?? undefined,
-                        total_duration: req.query.total_duration ?? undefined,
-                        agent_duration: req.query.agent_duration ?? undefined,
-                        operator: req.query.operator ?? undefined,
-                        circle: req.query.circle ?? undefined,
-                        extension: req.query.extension ?? undefined,
-                        recording: req.query.recording ?? undefined,
-                        createdAt: new Date(Date.now()),
-                        updatedAt: new Date(Date.now()),
-                    },
-                });
                 res.status(404).json({ error: "Call not found" });
                 return;
             }
