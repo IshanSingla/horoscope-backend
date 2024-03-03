@@ -4,7 +4,7 @@ const router: Router = Router();
 
 router.get("/pre", CallController.createIVRPre);
 router.get("/post", CallController.createIVRPost);
-// router.get("/ivr", CallController.getLastCall);
+router.get("/", CallController.getLastCall);
 export default router;
 
 console.log(process.env.DATABASE_URL);

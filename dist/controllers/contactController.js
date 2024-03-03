@@ -53,26 +53,26 @@ class ContactController {
                         value: newContact.whatsapp_number,
                     },
                 ],
-                birthdays: [
-                    {
-                        date: {
-                            day: ((newContact?.dob?.getDate() ?? 0) % 31) + 1, // Ensure day remains within the range 1-31
-                            month: (((newContact?.dob?.getMonth() ?? 0) + 1) % 12) + 1, // Ensure month remains within the range 1-12
-                            year: (newContact?.dob?.getFullYear() ?? 0) + 1,
-                        },
-                    },
-                ],
+                // birthdays: [
+                //   {
+                //     date: {
+                //       day: ((newContact?.dob?.getDate() ?? 0) % 31) + 1, // Ensure day remains within the range 1-31
+                //       month: (((newContact?.dob?.getMonth() ?? 0) + 1) % 12) + 1, // Ensure month remains within the range 1-12
+                //       year: (newContact?.dob?.getFullYear() ?? 0) + 1,
+                //     },
+                //   },
+                // ],
                 addresses: [
                     {
                         type: "Birth of Place",
                         city: newContact?.pob_description,
                     },
                 ],
-                genders: [
-                    {
-                        value: newContact?.gender,
-                    },
-                ],
+                // genders: [
+                //   {
+                //     value: newContact?.gender,
+                //   },
+                // ],
             };
             try {
                 const response = await axios_1.default.post("https://people.googleapis.com/v1/people:createContact", contactData, {
@@ -170,30 +170,6 @@ class ContactController {
             console.error("Error fetching new contacts:", error);
             response.status(500).json({
                 error: error.message || "Internal server error",
-            });
-        }
-    }
-    async isMobileNumber(req, res) {
-        try {
-            let mobile_number = req.body.mobile_number;
-            if (typeof req.body.mobile_number === "string") {
-                mobile_number = parseInt(req.body.mobile_number);
-            }
-            if (/\d{10}/.test(mobile_number)) {
-                res.status(200).json({
-                    message: "Number is valid",
-                });
-                return;
-            }
-            res.status(500).json({
-                message: "Number is invalid",
-            });
-            return;
-        }
-        catch (error) {
-            console.log(error.message);
-            res.status(500).json({
-                error: error.message,
             });
         }
     }

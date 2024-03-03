@@ -6,48 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const firebaseAdmin_1 = __importDefault(require("../services/firebaseAdmin"));
 const prisma_1 = require("../configs/prisma");
 class CallController {
-    async createCall(req, res) {
-        try {
-            if (!req.body.mobile_number) {
-                res.status(400).json({ error: "Mobile number is required" });
-                return;
-            }
-            const message = {
-                notification: {
-                    title: "Call is Coming from" + req.body.mobile_number,
-                    body: "Please pick up the call",
-                },
-                data: {
-                    number: req.body.mobile_number,
-                },
-                android: {
-                    priority: "high",
-                },
-                topic: "calls",
-            };
-            firebaseAdmin_1.default
-                .messaging()
-                .send(message)
-                .then((response) => {
-                console.log("Successfully sent message:", response);
-            })
-                .catch((error) => {
-                console.log("Error sending message:", error);
-            });
-            const newCall = await prisma_1.prisma.ivrs.create({
-                data: {
-                    agent_number: req.body.mobile_number,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                },
-            });
-            res.status(201).json({ message: "call saved", call: newCall });
-        }
-        catch (error) {
-            console.log(error);
-            res.status(500).json({ error: error.message });
-        }
-    }
     async createIVRPre(req, res) {
         try {
             const newData = await prisma_1.prisma.ivrs.create({
@@ -168,58 +126,6 @@ class CallController {
         }
         catch (error) {
             res.status(500).json({ error: "Error retrieving call" });
-        }
-    }
-    async getCall(req, res) {
-        try {
-            const call = await prisma_1.prisma.ivrs.findMany();
-            res.status(200).json({ call: call });
-        }
-        catch (error) {
-            res.status(500).json({ error: "Error retrieving call" });
-        }
-    }
-    async updateCall(req, res) {
-        try {
-            const existCall = await prisma_1.prisma.ivrs.findUnique({
-                where: {
-                    id: parseInt(req.params.id),
-                },
-            });
-            if (!existCall) {
-                res.status(404).json({
-                    message: "Call not found!",
-                });
-            }
-            const updatedCall = await prisma_1.prisma.ivrs.update({
-                where: {
-                    id: parseInt(req.params.id),
-                },
-                data: req.body,
-                select: {
-                    id: true,
-                    agent_number: true,
-                },
-            });
-            res.status(203).json(updatedCall);
-        }
-        catch (error) {
-            res.status(500).json({ error: "Error updating call" });
-        }
-    }
-    async deleteCall(req, res) {
-        try {
-            await prisma_1.prisma.ivrs.delete({
-                where: {
-                    id: parseInt(req.params.id),
-                },
-            });
-            res.status(204).json({
-                message: "Call delete successfully",
-            });
-        }
-        catch (error) {
-            res.status(500).json({ error: "Error deleting call" });
         }
     }
 }
