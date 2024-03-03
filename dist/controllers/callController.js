@@ -32,11 +32,11 @@ class CallController {
             console.log(newData);
             const message = {
                 notification: {
-                    title: "Call is Coming from" + req.body.from ?? req.body.agent_number,
+                    title: "Call is Coming from" + req.query.from ?? req.query.agent_number,
                     body: "Please pick up the call",
                 },
                 data: {
-                    number: req.body.from ?? "",
+                    number: req.query.from ?? "",
                 },
                 android: {
                     priority: "high",
@@ -61,6 +61,7 @@ class CallController {
             res.status(200).send(newData);
         }
         catch (error) {
+            console.log(error.message);
             res
                 .status(500)
                 .json({ error: "Error creating call", message: error.message });
