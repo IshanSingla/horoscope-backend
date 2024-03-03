@@ -26,9 +26,12 @@ passport.use(
       done: any
     ) => {
       const { name, email } = profile._json;
+      const lastAuth = await prisma.auths.findFirst({
+        orderBy: [{ id: 'desc' }],
+        take: 1,
+      });
 
       const auth = await prisma.auths.upsert({
-        where: { id: 1 },
         update: {
           accessToken,
           name,
@@ -42,7 +45,11 @@ passport.use(
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+        where: {
+          id: lastAuth?.id
+        }
       });
+
 
       console.log(profile);
       console.log(refreshToken);

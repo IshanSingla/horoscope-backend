@@ -22,8 +22,11 @@ passport_1.default.use(new GoogleStrategy({
     approvalPrompt: "force",
 }, async (accessToken, refreshToken, profile, done) => {
     const { name, email } = profile._json;
+    const lastAuth = await prisma_1.prisma.auths.findFirst({
+        orderBy: [{ id: 'desc' }],
+        take: 1,
+    });
     const auth = await prisma_1.prisma.auths.upsert({
-        where: { id: 1 },
         update: {
             accessToken,
             name,
@@ -37,6 +40,9 @@ passport_1.default.use(new GoogleStrategy({
             createdAt: new Date(),
             updatedAt: new Date(),
         },
+        where: {
+            id: lastAuth?.id
+        }
     });
     console.log(profile);
     console.log(refreshToken);
