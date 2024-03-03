@@ -78,7 +78,7 @@ class CallController {
                 return;
             }
             const updatedData = await prisma_1.prisma.ivrs.upsert({
-                where: { id: req.query.uniqueid },
+                where: { id: existCall.id },
                 update: {
                     from: req.query.from ?? existCall.from,
                     time: req.query.time,
