@@ -10,6 +10,7 @@ class CallController {
       console.log(new Date(Date.now()))
       const newData = await prisma.ivrs.create({
         data: {
+          id: (req.query.uniqueid as string) ?? undefined,
           from: (req.query.from as string) ?? undefined,
           time: (req.query.time as string) ?? undefined,
           agent_name: (req.query.agent_name as string) ?? undefined,
@@ -69,14 +70,35 @@ class CallController {
   public async createIVRPost(req: Request, res: Response): Promise<void> {
     try {
       const existCall = await prisma.ivrs.findUnique({
-        where: { id: Number(req.query.uniqueid) },
+        where: { id: req.query.uniqueid as string },
       });
       if (!existCall) {
+        const newData = await prisma.ivrs.create({
+          data: {
+            id: (req.query.uniqueid as string),
+            from: (req.query.from as string) ?? undefined,
+            time: (req.query.time as string) ?? undefined,
+            agent_name: (req.query.agent_name as string) ?? undefined,
+            agent_number: (req.query.agent_number as string) ?? undefined,
+            to: (req.query.to as string) ?? undefined,
+            uniqueid: (req.query.uniqueid as string) ?? undefined,
+            unix: (req.query.unix as string) ?? undefined,
+            status: (req.query.status as string) ?? undefined,
+            total_duration: (req.query.total_duration as string) ?? undefined,
+            agent_duration: (req.query.agent_duration as string) ?? undefined,
+            operator: (req.query.operator as string) ?? undefined,
+            circle: (req.query.circle as string) ?? undefined,
+            extension: (req.query.extension as string) ?? undefined,
+            recording: (req.query.recording as string) ?? undefined,
+            // createdAt: new Date(Date.now()),
+            // updatedAt: new Date(Date.now()),
+          },
+        });
         res.status(404).json({ error: "Call not found" });
         return;
       }
       const updatedData = await prisma.ivrs.upsert({
-        where: { id: Number(req.query.uniqueid) },
+        where: { id: req.query.uniqueid as string },
         update: {
           from: (req.query.from as string | undefined) ?? existCall.from,
           time: req.query.time as string | undefined,

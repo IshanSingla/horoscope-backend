@@ -32,7 +32,7 @@ CREATE TABLE `contacts` (
 
 -- CreateTable
 CREATE TABLE `ivrs` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `from` VARCHAR(191) NULL,
     `agent_duration` VARCHAR(191) NULL,
     `agent_name` VARCHAR(191) NULL,

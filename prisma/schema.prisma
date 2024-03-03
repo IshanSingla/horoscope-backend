@@ -35,7 +35,7 @@ model contacts {
 }
 
 model ivrs {
-  id             Int      @id @default(autoincrement())
+  id              String               @id @default(uuid())    
   from            String?
   agent_duration  String?
   agent_name      String?
