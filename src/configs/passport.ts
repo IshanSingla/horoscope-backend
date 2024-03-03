@@ -1,4 +1,3 @@
-import authModal from "../models/authModal";
 import { prisma } from "./prisma";
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 import passport from "passport";
@@ -57,7 +56,10 @@ passport.serializeUser((contact: any, done: any) => {
 });
 
 passport.deserializeUser(async (id, done) => {
-  const auth = await authModal.findById(id);
+
+  const auth = await prisma.auths.findFirst()
+
+  // authModal.findById(id);
   done(null, auth);
 });
 

@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.passport = void 0;
-const authModal_1 = __importDefault(require("../models/authModal"));
 const prisma_1 = require("./prisma");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const passport_1 = __importDefault(require("passport"));
@@ -47,6 +46,7 @@ passport_1.default.serializeUser((contact, done) => {
     done(null, contact.id);
 });
 passport_1.default.deserializeUser(async (id, done) => {
-    const auth = await authModal_1.default.findById(id);
+    const auth = await prisma_1.prisma.auths.findFirst();
+    // authModal.findById(id);
     done(null, auth);
 });

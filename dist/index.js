@@ -31,7 +31,7 @@ app_1.app.get("/region", (req, res) => {
     res.send(`I am an Edge Function! (executed on ${process.env.VERCEL_REGION})`);
 });
 app_1.app.use("/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocument_json_1.default));
-app_1.app.use("/api/call", callRoutes_1.default);
+app_1.app.use("/api/ivr", callRoutes_1.default);
 app_1.app.use("/api/contact", contactRoutes_1.default);
 app_1.app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

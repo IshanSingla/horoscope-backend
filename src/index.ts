@@ -43,7 +43,7 @@ app.get("/region", (req, res) => {
 });
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use("/api/call", callRoutes);
+app.use("/api/ivr", callRoutes);
 app.use("/api/contact", contactRoutes);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
