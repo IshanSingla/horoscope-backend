@@ -3,53 +3,59 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mongodb"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-
 model auths {
-  id              String               @id @default(uuid())
-  name            String
-  email           String
-  accessToken     String
-  createdAt       DateTime?            @default(now()) @db.Date
-  updatedAt       DateTime?            @updatedAt @db.Date
+  id          String    @id @default(uuid()) @map("_id")
+  name        String
+  email       String
+  accessToken String
+  createdAt   DateTime? @default(now()) @db.Date
+  updatedAt   DateTime? @updatedAt @db.Date
 }
 
 model contacts {
-  id              String               @id @default(uuid())      
+  id              String    @id @default(uuid()) @map("_id")
   name            String?
-  dob             DateTime?            @db.Date  
-  mobile_number   String               @unique(map: "mobile_number_1")
+  dob             DateTime? @db.Date
+  mobile_number   String    @unique(map: "mobile_number_1")
   whatsapp_number String
-  gender          String?  
+  gender          String?
   series_number   Int
   pob_description String?
   pob_latitude    Float?
-  pob_longitude   Float?  
-  last_fetched    DateTime?            @db.Date
-  createdAt       DateTime?            @default(now()) @db.Date
-  updatedAt       DateTime?            @updatedAt @db.Date
+  pob_longitude   Float?
+  createdAt       DateTime? @default(now()) @db.Date
+  updatedAt       DateTime? @updatedAt @db.Date
+  
 }
 
 model ivrs {
-  id              String               @id @default(uuid())    
-  from            String?
-  agent_duration  String?
-  agent_name      String?
-  agent_number    String?
-  circle          String?
-  extension       String?
-  operator        String?
-  recording       String?
-  status          String?
-  time            String?
-  to              String?
-  total_duration  String?
-  uniqueid        String?
-  unix            String?
-  createdAt       DateTime?            @default(now()) @db.Date
-  updatedAt       DateTime?            @updatedAt @db.Date
+  id             String    @id @default(uuid()) @map("_id")
+  from           String?
+  agent_duration String?
+  agent_name     String?
+  agent_number   String?
+  circle         String?
+  extension      String?
+  operator       String?
+  recording      String?
+  status         String?
+  time           String?
+  to             String?
+  total_duration String?
+  uniqueid       String?
+  unix           String?
+  createdAt      DateTime? @default(now()) @db.Date
+  updatedAt      DateTime? @updatedAt @db.Date
+}
+
+model last_fetched {
+  id        String    @id @default(uuid()) @map("_id")
+  createdAt DateTime? @default(now()) @db.Date
+  updatedAt DateTime? @updatedAt @db.Date
+  time      DateTime  @default(now()) @db.Date
 }

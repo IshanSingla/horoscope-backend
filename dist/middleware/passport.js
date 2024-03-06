@@ -38,8 +38,6 @@ function initializePassport(passport) {
                 updatedAt: new Date(),
             },
         });
-        console.log(profile);
-        console.log(refreshToken);
         return done(null, auth);
     }));
     passport.serializeUser((contact, done) => {

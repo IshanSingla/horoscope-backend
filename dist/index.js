@@ -22,7 +22,7 @@ app_1.app.get("/login", passport_1.passport.authenticate("google", {
     ],
 }));
 app_1.app.get("/google/callback", passport_1.passport.authenticate("google", { failureRedirect: "/" }), (req, res) => {
-    res.redirect("/");
+    res.send("Login Successful");
 });
 app_1.app.get("/ping", (req, res) => {
     res.send("pong");

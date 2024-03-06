@@ -7,4 +7,3 @@ router.get("/post", CallController.createIVRPost);
 router.get("/", CallController.getLastCall);
 export default router;
 
-console.log(process.env.DATABASE_URL);

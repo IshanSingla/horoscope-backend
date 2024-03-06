@@ -8,33 +8,35 @@ const prisma_1 = require("../configs/prisma");
 class CallController {
     async createIVRPre(req, res) {
         try {
+            const from = req.query.from;
+            const mobile_number = from.startsWith("0")
+                ? from.length === 11 && /^\d{10}$/.test(from.slice(1))
+                    ? from.slice(1)
+                    : (() => {
+                        throw new Error("Mobile number must be 10 digits long after removing leading '0'");
+                    })()
+                : from.length === 10 && /^\d{10}$/.test(from)
+                    ? from
+                    : (() => {
+                        throw new Error("Mobile number must be 10 digits long");
+                    })();
             const newData = await prisma_1.prisma.ivrs.create({
                 data: {
-                    from: req.query.from ?? undefined,
+                    from: mobile_number ?? undefined,
                     time: req.query.time ?? undefined,
-                    agent_name: req.query.agent_name ?? undefined,
                     agent_number: req.query.agent_number ?? undefined,
                     to: req.query.to ?? undefined,
                     uniqueid: req.query.uniqueid ?? undefined,
-                    unix: req.query.unix ?? undefined,
-                    status: req.query.status ?? undefined,
-                    total_duration: req.query.total_duration ?? undefined,
-                    agent_duration: req.query.agent_duration ?? undefined,
-                    operator: req.query.operator ?? undefined,
-                    circle: req.query.circle ?? undefined,
-                    extension: req.query.extension ?? undefined,
-                    recording: req.query.recording ?? undefined,
-                    // createdAt: new Date(Date.now()),
-                    // updatedAt: new Date(Date.now()),
                 },
             });
             const message = {
                 notification: {
-                    title: "Call is Coming from" + req.query.from ?? req.query.agent_number,
+                    title: ("Call is Coming from" + mobile_number) ??
+                        req.query.agent_number,
                     body: "Please pick up the call",
                 },
                 data: {
-                    number: req.query.from ?? "",
+                    number: mobile_number ?? "",
                 },
                 android: {
                     priority: "high",
@@ -67,33 +69,36 @@ class CallController {
     }
     async createIVRPost(req, res) {
         try {
+            const from = req.query.from;
+            const mobile_number = from.startsWith("0")
+                ? from.length === 11 && /^\d{10}$/.test(from.slice(1))
+                    ? from.slice(1)
+                    : (() => {
+                        throw new Error("Mobile number must be 10 digits long after removing leading '0'");
+                    })()
+                : from.length === 10 && /^\d{10}$/.test(from)
+                    ? from
+                    : (() => {
+                        throw new Error("Mobile number must be 10 digits long");
+                    })();
             const existCall = await prisma_1.prisma.ivrs.findFirst({
-                where: { from: "0" + req.query.from },
+                where: { from: mobile_number },
                 orderBy: {
                     time: "desc",
                 },
             });
             if (!existCall) {
-                res.status(404).json({ error: "Call not found" });
+                res.status(404).send("Call not found");
                 return;
             }
             const updatedData = await prisma_1.prisma.ivrs.upsert({
                 where: { id: existCall.id },
                 update: {
-                    from: req.query.from ?? existCall.from,
-                    time: req.query.time,
-                    agent_name: req.query.agent_name,
-                    agent_number: req.query.agent_number,
-                    to: req.query.to,
-                    uniqueid: req.query.uniqueid,
-                    unix: req.query.unix,
-                    status: req.query.status,
-                    total_duration: req.query.total_duration,
-                    agent_duration: req.query.agent_duration,
-                    operator: req.query.operator,
-                    circle: req.query.circle,
-                    extension: req.query.extension,
-                    recording: req.query.recording,
+                    from: mobile_number ?? existCall.from,
+                    time: req.query.time ?? undefined,
+                    agent_number: req.query.agent_number ?? undefined,
+                    to: req.query.to ?? undefined,
+                    uniqueid: req.query.uniqueid ?? undefined,
                 },
                 create: {
                     agent_number: req.query.agent_number,
@@ -101,16 +106,11 @@ class CallController {
                     updatedAt: new Date(),
                 },
             });
-            // Sending message code here
-            res.status(200).json({
-                message: "Data updated",
-                data: updatedData,
-            });
+            res.status(200).send("Data updated");
         }
         catch (error) {
-            res
-                .status(500)
-                .json({ error: "Error creating call", message: error.message });
+            console.log(error.message);
+            res.status(500).send("Internal Server Error");
         }
     }
     async getLastCall(req, res) {
@@ -128,7 +128,7 @@ class CallController {
             res.status(200).json(contact ?? lastCall);
         }
         catch (error) {
-            res.status(500).json({ error: "Error retrieving call" });
+            res.status(500).json("Error retrieving call");
         }
     }
 }

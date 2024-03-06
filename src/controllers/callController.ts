@@ -4,36 +4,40 @@ import { Message } from "firebase-admin/lib/messaging/messaging-api";
 import { prisma } from "../configs/prisma";
 
 class CallController {
-
   public async createIVRPre(req: Request, res: Response): Promise<void> {
     try {
+      const from: string = req.query.from as string;
+      const mobile_number: string = from.startsWith("0")
+        ? from.length === 11 && /^\d{10}$/.test(from.slice(1))
+          ? from.slice(1)
+          : (() => {
+              throw new Error(
+                "Mobile number must be 10 digits long after removing leading '0'"
+              );
+            })()
+        : from.length === 10 && /^\d{10}$/.test(from)
+        ? from
+        : (() => {
+            throw new Error("Mobile number must be 10 digits long");
+          })();
       const newData = await prisma.ivrs.create({
         data: {
-          from: (req.query.from as string) ?? undefined,
+          from: mobile_number ?? undefined,
           time: (req.query.time as string) ?? undefined,
-          agent_name: (req.query.agent_name as string) ?? undefined,
           agent_number: (req.query.agent_number as string) ?? undefined,
           to: (req.query.to as string) ?? undefined,
           uniqueid: (req.query.uniqueid as string) ?? undefined,
-          unix: (req.query.unix as string) ?? undefined,
-          status: (req.query.status as string) ?? undefined,
-          total_duration: (req.query.total_duration as string) ?? undefined,
-          agent_duration: (req.query.agent_duration as string) ?? undefined,
-          operator: (req.query.operator as string) ?? undefined,
-          circle: (req.query.circle as string) ?? undefined,
-          extension: (req.query.extension as string) ?? undefined,
-          recording: (req.query.recording as string) ?? undefined,
-          // createdAt: new Date(Date.now()),
-          // updatedAt: new Date(Date.now()),
         },
       });
       const message: Message = {
         notification: {
-          title: "Call is Coming from" + req.query.from as string ?? req.query.agent_number as string,
+          title:
+            (("Call is Coming from" + mobile_number) as string) ??
+            (req.query.agent_number as string),
           body: "Please pick up the call",
         },
         data: {
-          number: req.query.from as string ?? "",
+          number: mobile_number ?? "",
         },
         android: {
           priority: "high",
@@ -66,33 +70,39 @@ class CallController {
 
   public async createIVRPost(req: Request, res: Response): Promise<void> {
     try {
+      const from: string = req.query.from as string;
+      const mobile_number: string = from.startsWith("0")
+        ? from.length === 11 && /^\d{10}$/.test(from.slice(1))
+          ? from.slice(1)
+          : (() => {
+              throw new Error(
+                "Mobile number must be 10 digits long after removing leading '0'"
+              );
+            })()
+        : from.length === 10 && /^\d{10}$/.test(from)
+        ? from
+        : (() => {
+            throw new Error("Mobile number must be 10 digits long");
+          })();
       const existCall = await prisma.ivrs.findFirst({
-        where: { from: "0" + (req.query.from as string) },
+        where: { from: mobile_number },
         orderBy: {
           time: "desc",
         },
       });
       if (!existCall) {
-        res.status(404).json({ error: "Call not found" });
+        res.status(404).send("Call not found");
         return;
       }
+
       const updatedData = await prisma.ivrs.upsert({
         where: { id: existCall.id },
         update: {
-          from: (req.query.from as string | undefined) ?? existCall.from,
-          time: req.query.time as string | undefined,
-          agent_name: req.query.agent_name as string | undefined,
-          agent_number: req.query.agent_number as string | undefined,
-          to: req.query.to as string | undefined,
-          uniqueid: req.query.uniqueid as string | undefined,
-          unix: req.query.unix as string | undefined,
-          status: req.query.status as string | undefined,
-          total_duration: req.query.total_duration as string | undefined,
-          agent_duration: req.query.agent_duration as string | undefined,
-          operator: req.query.operator as string | undefined,
-          circle: req.query.circle as string | undefined,
-          extension: req.query.extension as string | undefined,
-          recording: req.query.recording as string | undefined,
+          from: mobile_number ?? existCall.from,
+          time: (req.query.time as string) ?? undefined,
+          agent_number: (req.query.agent_number as string) ?? undefined,
+          to: (req.query.to as string) ?? undefined,
+          uniqueid: (req.query.uniqueid as string) ?? undefined,
         },
         create: {
           agent_number: req.query.agent_number as string,
@@ -100,15 +110,11 @@ class CallController {
           updatedAt: new Date(),
         },
       });
-      // Sending message code here
-      res.status(200).json({
-        message: "Data updated",
-        data: updatedData,
-      });
+
+      res.status(200).send("Data updated");
     } catch (error: any) {
-      res
-        .status(500)
-        .json({ error: "Error creating call", message: error.message });
+      console.log(error.message);
+      res.status(500).send("Internal Server Error");
     }
   }
 
@@ -126,7 +132,7 @@ class CallController {
       });
       res.status(200).json(contact ?? lastCall);
     } catch (error) {
-      res.status(500).json({ error: "Error retrieving call" });
+      res.status(500).json("Error retrieving call");
     }
   }
 }

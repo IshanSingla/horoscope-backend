@@ -11,7 +11,7 @@ exports.passport = passport_1.default;
 passport_1.default.use(new GoogleStrategy({
     clientID: "377941489644-18up92381d1o35hv5nakjhv8637gv2v4.apps.googleusercontent.com",
     clientSecret: "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",
-    callbackURL: "https://freeastrologyoncall.vercel.app/google/callback",
+    callbackURL: "http://localhost:3000/google/callback",
     scope: [
         "profile",
         "email",
@@ -22,31 +22,35 @@ passport_1.default.use(new GoogleStrategy({
     approvalPrompt: "force",
 }, async (accessToken, refreshToken, profile, done) => {
     const { name, email } = profile._json;
-    const lastAuth = await prisma_1.prisma.auths.findFirst({
-        orderBy: [{ id: 'desc' }],
-        take: 1,
-    });
-    const auth = await prisma_1.prisma.auths.upsert({
-        where: {
-            id: lastAuth?.id ?? ""
-        },
-        update: {
-            accessToken,
-            name,
-            email,
-            updatedAt: new Date(),
-        },
-        create: {
-            accessToken,
-            name,
-            email,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        },
-    });
-    console.log(profile);
-    console.log(refreshToken);
-    return done(null, auth);
+    try {
+        const lastAuth = await prisma_1.prisma.auths.findFirst({
+            orderBy: [{ createdAt: "desc" }],
+            take: 1,
+        });
+        const auth = await prisma_1.prisma.auths.upsert({
+            where: {
+                id: lastAuth?.id ?? "",
+            },
+            update: {
+                accessToken,
+                name,
+                email,
+                updatedAt: new Date(),
+            },
+            create: {
+                accessToken,
+                name,
+                email,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+        });
+        return done(null, auth);
+    }
+    catch (error) {
+        console.log(error);
+        return done(null, null);
+    }
 }));
 passport_1.default.serializeUser((contact, done) => {
     done(null, contact.id);

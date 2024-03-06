@@ -10,4 +10,3 @@ router.get("/pre", callController_1.default.createIVRPre);
 router.get("/post", callController_1.default.createIVRPost);
 router.get("/", callController_1.default.getLastCall);
 exports.default = router;
-console.log(process.env.DATABASE_URL);

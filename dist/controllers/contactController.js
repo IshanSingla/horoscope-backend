@@ -7,16 +7,12 @@ const axios_1 = __importDefault(require("axios"));
 const prisma_1 = require("../configs/prisma");
 class ContactController {
     async createContact(req, res) {
-        console.log(req.body);
         try {
             const existingContact = await prisma_1.prisma.contacts.findUnique({
                 where: { mobile_number: req.body.mobile_number },
             });
             if (existingContact) {
-                res.status(200).json({
-                    message: "Contact already created!",
-                    contact: existingContact,
-                });
+                res.status(400).send("Already Created");
                 return;
             }
             const newContact = await prisma_1.prisma.contacts.create({
@@ -153,18 +149,30 @@ class ContactController {
     }
     async getNewContacts(request, response) {
         try {
-            const nonFetchedContacts = await prisma_1.prisma.contacts.findMany({
-                where: { last_fetched: null },
+            let last_time = await prisma_1.prisma.last_fetched.findFirst();
+            if (!last_time) {
+                last_time = await prisma_1.prisma.last_fetched.create({
+                    data: {
+                        time: new Date(),
+                    },
+                });
+            }
+            const last_fetched_contacts = await prisma_1.prisma.contacts.findMany({
+                where: {
+                    createdAt: {
+                        gte: last_time.time,
+                    },
+                },
             });
-            await prisma_1.prisma.$transaction(async (tx) => {
-                for (const contact of nonFetchedContacts) {
-                    await tx.contacts.update({
-                        where: { id: contact.id },
-                        data: { last_fetched: new Date() },
-                    });
-                }
+            await prisma_1.prisma.last_fetched.update({
+                where: {
+                    id: last_time.id,
+                },
+                data: {
+                    time: new Date(),
+                },
             });
-            response.status(200).json(nonFetchedContacts);
+            response.status(200).json(last_fetched_contacts);
         }
         catch (error) {
             console.error("Error fetching new contacts:", error);
